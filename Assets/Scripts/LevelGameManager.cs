@@ -13,9 +13,11 @@ public class LevelGameManager : MonoBehaviour
     void Start()
     {
         tiles = GameObject.FindGameObjectsWithTag("Tile");
+
+        // relative pos of neighbour tiles 
         neighbours = new List<(int dx, int dy)>
         {
-            (-1, -1), (-1, 1), (1, -1), (1, 1),     // diag
+            (-1, -1), (-1, 1), (1, -1), (1, 1),
             (0, 1), (0, -1), (1, 0), (-1, 0)
         };
     }
