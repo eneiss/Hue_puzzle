@@ -35,12 +35,12 @@ public class TileScript : MonoBehaviour
     {
         Debug.Log("Click");
         InvertColor();
-        gameManager.InvertTiles(0, 0);
+        gameManager.InvertTiles((int) transform.localPosition.x, (int) transform.localPosition.y);
     }
 
     public void InvertColor()
     {
-        Debug.Log("Inverting color");
+        Debug.Log("Inverting color of tile at " + transform.localPosition.x + ", " + transform.localPosition.y);
         SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
         renderer.color = new Color(1f - renderer.color.r, 1f - renderer.color.g, 1f - renderer.color.b, 1f);
     }
