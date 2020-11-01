@@ -22,18 +22,54 @@ public class LevelGameManager : MonoBehaviour
 
     public void InvertTiles(int x, int y)
     {
+
+        bool allCorrect = true;
+
         foreach (GameObject tile in tiles)
         {
             foreach ((int dx, int dy) in neighbours)
             {
-                Debug.Log("dx : " + dx + ", dy : " + dy);
+                //Debug.Log("dx : " + dx + ", dy : " + dy);
 
                 if ((x + dx == tile.transform.localPosition.x) && (y + dy == tile.transform.localPosition.y))
                 {
                     TileScript ts = (TileScript) tile.GetComponent(typeof(TileScript));
                     ts.InvertColor();
+                    if (ts.isInverted)
+                    {
+                        allCorrect = false;
+                    }
                 }
             }
         }
+
+        if (allCorrect)
+        {
+            if (LevelIsCleared())
+            {
+                EndLevel();
+            }
+        }
+    }
+
+    bool LevelIsCleared()
+    {
+        bool allCorrect = true;
+        foreach (GameObject tile in tiles)
+        {
+            TileScript ts = (TileScript)tile.GetComponent(typeof(TileScript));
+            if (ts.isInverted)
+            {
+                allCorrect = false;
+                break;
+            }
+        }
+
+        return allCorrect;
+    }
+
+    void EndLevel()
+    {
+        Debug.Log("GG!");
     }
 }

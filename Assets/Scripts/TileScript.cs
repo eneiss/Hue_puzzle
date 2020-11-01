@@ -8,6 +8,7 @@ public class TileScript : MonoBehaviour
 {
 
     LevelGameManager gameManager;
+    public bool isInverted = false;
 
     // Start is called before the first frame update
     void Start()
@@ -40,8 +41,9 @@ public class TileScript : MonoBehaviour
 
     public void InvertColor()
     {
-        Debug.Log("Inverting color of tile at " + transform.localPosition.x + ", " + transform.localPosition.y);
+        //Debug.Log("Inverting color of tile at " + transform.localPosition.x + ", " + transform.localPosition.y);
         SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
         renderer.color = new Color(1f - renderer.color.r, 1f - renderer.color.g, 1f - renderer.color.b, 1f);
+        isInverted = !isInverted;
     }
 }
