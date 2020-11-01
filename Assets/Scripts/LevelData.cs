@@ -11,6 +11,7 @@ public class LevelData : MonoBehaviour
     public Color topRightColor;
     public Color bottomLeftColor;
     public Color bottomRightColor;
+    public List<string> moves;
 
     // todo fixed tiles and moves to generate the solution
 }

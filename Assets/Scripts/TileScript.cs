@@ -36,8 +36,8 @@ public class TileScript : MonoBehaviour
 
     void Click()
     {
-        Debug.Log("Click");
-        InvertColor();
+        //Debug.Log("Click");
+        // InvertColor();
         gameManager.InvertTiles((int) transform.localPosition.x, (int) transform.localPosition.y);
     }
 

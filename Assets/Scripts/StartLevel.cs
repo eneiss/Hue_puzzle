@@ -28,5 +28,10 @@ public class StartLevel : MonoBehaviour
         dest.bottomRightColor = source.bottomRightColor;
         dest.bottomLeftColor = source.bottomLeftColor;
 
+        foreach (string move in source.moves)
+        {
+            dest.moves.Add(move);
+        }
+
     }
 }

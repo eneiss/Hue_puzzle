@@ -14,6 +14,14 @@ public class LevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        // relative pos of neighbour tiles 
+        neighbours = new List<(int dx, int dy)>
+        {
+            (-1, -1), (-1, 1), (1, -1), (1, 1),
+            (0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)
+        };
+
         levelData = (LevelData) GameObject.FindWithTag("LevelData").GetComponent(typeof(LevelData));
         //Debug.Log(levelData.nbRows);
 
@@ -21,12 +29,8 @@ public class LevelManager : MonoBehaviour
 
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
-        // relative pos of neighbour tiles 
-        neighbours = new List<(int dx, int dy)>
-        {
-            (-1, -1), (-1, 1), (1, -1), (1, 1),
-            (0, 1), (0, -1), (1, 0), (-1, 0)
-        };
+        ApplyMoves();
+
     }
 
     void GenerateInitialGrid()
@@ -77,11 +81,17 @@ public class LevelManager : MonoBehaviour
     void ApplyMoves()
     {
         // TODO apply the moves of the level data to the grid
+        foreach (string move in levelData.moves)
+        {
+            Debug.Log(move);
+            string[] splitString = move.Split(' ');
+            Debug.Log("Move : " + Int16.Parse(splitString[0]) + ", " + Int16.Parse(splitString[1]));
+            InvertTiles(Int16.Parse(splitString[0]), Int16.Parse(splitString[1]));
+        }
     }
 
     public void InvertTiles(int x, int y)
     {
-
         bool allCorrect = true;
 
         foreach (GameObject tile in tiles)
