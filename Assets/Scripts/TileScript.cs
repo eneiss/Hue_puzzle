@@ -7,13 +7,15 @@ using UnityEngine;
 public class TileScript : MonoBehaviour
 {
 
-    LevelGameManager gameManager;
+    // LevelGameManager gameManager;        // OLD
+    LevelManager gameManager;
     public bool isInverted = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = (LevelGameManager) GameObject.FindWithTag("LGM").GetComponent(typeof(LevelGameManager));
+        // gameManager = (LevelGameManager) GameObject.FindWithTag("LGM").GetComponent(typeof(LevelGameManager));       // OLD
+        gameManager = (LevelManager) GameObject.FindWithTag("LevelManager").GetComponent(typeof(LevelManager));
     }
 
     // Update is called once per frame

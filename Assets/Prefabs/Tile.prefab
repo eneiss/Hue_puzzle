@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8461064545221941597}
   - component: {fileID: 6913504087669587953}
   m_Layer: 0
-  m_Name: TestTile
+  m_Name: Tile
   m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9e58d080f4648b343bafb1a44e2abc3e, type: 3}
-  m_Color: {r: 0.37023258, g: 0, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 366bf68b20126c1489a8934a7cc19f1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isInverted: 0
 --- !u!61 &6913504087669587953
 BoxCollider2D:
   m_ObjectHideFlags: 0
