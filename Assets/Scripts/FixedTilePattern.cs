@@ -13,6 +13,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
     // computes the coordinates of each fixed tile in the pattern
     void computeTileCoords()
     {
+        tiles = new List<Tuple<int, int>>();
         // todo
         tiles.Add(new Tuple<int, int>(roffset, coffset));
     }
@@ -26,7 +27,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
 
         foreach (Tuple<int, int> tuple in tiles)
         {
-            yield return (tuple.Item1, tuple.Item2);
+            yield return tuple;
         }
     }
 

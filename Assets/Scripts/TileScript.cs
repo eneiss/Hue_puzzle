@@ -11,6 +11,7 @@ public class TileScript : MonoBehaviour
     LevelManager gameManager;
     public bool isInverted = false;
     public GameObject dot;
+    bool isFixed = false;
 
     // Start is called before the first frame update
     void Start()
@@ -39,14 +40,30 @@ public class TileScript : MonoBehaviour
     {
         //Debug.Log("Click");
         // InvertColor();
-        gameManager.InvertTiles((int) transform.localPosition.x, (int) transform.localPosition.y);
+        if (!this.isFixed)
+        {
+            gameManager.InvertTiles((int)transform.localPosition.x, (int)transform.localPosition.y);
+        }
+        // todo else animate
     }
 
     public void InvertColor()
     {
         //Debug.Log("Inverting color of tile at " + transform.localPosition.x + ", " + transform.localPosition.y);
-        SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
-        renderer.color = new Color(1f - renderer.color.r, 1f - renderer.color.g, 1f - renderer.color.b, 1f);
-        isInverted = !isInverted;
+        if (!this.isFixed)
+        {
+            SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
+            renderer.color = new Color(1f - renderer.color.r, 1f - renderer.color.g, 1f - renderer.color.b, 1f);
+            isInverted = !isInverted;
+        }
+    }
+
+    public void SetFixed(bool isFixed)
+    {
+        if (isFixed)
+        {
+            this.isFixed = true;
+            this.dot.SetActive(true);
+        }
     }
 }

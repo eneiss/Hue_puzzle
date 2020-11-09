@@ -54,7 +54,15 @@ public class LevelManager : MonoBehaviour
 
     void SetFixedTiles()
     {
-        // todo
+        foreach (FixedTilePattern pattern in levelData.fixedTiles)
+        {
+            foreach (Tuple<int, int> coords in pattern)
+            {
+                GameObject tile = GetTile(coords.Item1, coords.Item2);
+                TileScript tileScript = (TileScript) tile.GetComponent(typeof(TileScript));
+                tileScript.SetFixed(true);
+            }
+        }
     }
 
     // r, c 0-based indexing
@@ -67,7 +75,20 @@ public class LevelManager : MonoBehaviour
         return new Color(red, green, blue, 1f);
     }
 
-    // call for each rbg composant and get the final value for the composant at pos r, c
+    GameObject GetTile(int r, int c)
+    {
+        foreach (GameObject tile in tiles)
+        {
+            if ((tile.transform.localPosition.x == r) && (levelData.nbColumns - tile.transform.localPosition.y - 1 == c))
+            {
+                return tile;
+            }
+        }
+
+        return null;
+    }
+         
+    // call for each rbg component and get the final value for the component at pos r, c
     float GetBarycenter(float c1, float c2, float c3, float c4, int r, int c)
     {
         float x1 = c;
