@@ -9,29 +9,14 @@ public class StartLevel : MonoBehaviour
     public void LoadLevel()
     {
         Debug.Log("Starting level");
-        LevelData levelData = (LevelData) gameObject.GetComponent(typeof(LevelData));
+        LevelData tempLevelData = (LevelData) gameObject.GetComponent(typeof(LevelData));
         GameObject levelDataObject = GameObject.FindWithTag("LevelData");
+        LevelData keepLevelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
         DontDestroyOnLoad(levelDataObject);
 
-        copyLevelData(levelData, (LevelData) levelDataObject.GetComponent(typeof(LevelData)));
+        keepLevelData.Copy(tempLevelData);
 
         SceneManager.LoadScene("Level");
     }
 
-    // WARNING must be edited when making changes to the level data structure
-    void copyLevelData(LevelData source, LevelData dest)
-    {
-        dest.nbRows = source.nbRows;
-        dest.nbColumns = source.nbColumns;
-        dest.topLeftColor = source.topLeftColor;
-        dest.topRightColor = source.topRightColor;
-        dest.bottomRightColor = source.bottomRightColor;
-        dest.bottomLeftColor = source.bottomLeftColor;
-
-        foreach (string move in source.moves)
-        {
-            dest.moves.Add(move);
-        }
-
-    }
 }

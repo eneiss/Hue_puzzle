@@ -12,6 +12,28 @@ public class LevelData : MonoBehaviour
     public Color bottomLeftColor;
     public Color bottomRightColor;
     public List<string> moves;
+    public List<FixedTilePattern> fixedTiles;
 
-    // todo fixed tiles and moves to generate the solution
+    public void Copy(LevelData source)
+    {
+        this.nbRows = source.nbRows;
+        this.nbColumns = source.nbColumns;
+        this.topLeftColor = source.topLeftColor;
+        this.topRightColor = source.topRightColor;
+        this.bottomRightColor = source.bottomRightColor;
+        this.bottomLeftColor = source.bottomLeftColor;
+
+        // shallow copy !!!!
+        // WARNING must be edited when making changes to the level data structure
+        foreach (string move in source.moves)
+        {
+            this.moves.Add(move);
+        }
+
+        foreach (FixedTilePattern pattern in source.fixedTiles)
+        {
+            this.fixedTiles.Add(pattern);
+        }
+    }
+
 }
