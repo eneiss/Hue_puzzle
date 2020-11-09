@@ -10,6 +10,7 @@ public class TileScript : MonoBehaviour
     // LevelGameManager gameManager;        // OLD
     LevelManager gameManager;
     public bool isInverted = false;
+    public GameObject dot;
 
     // Start is called before the first frame update
     void Start()

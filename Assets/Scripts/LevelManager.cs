@@ -29,6 +29,8 @@ public class LevelManager : MonoBehaviour
 
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
+        SetFixedTiles();
+
         ApplyMoves();
 
     }
@@ -48,6 +50,11 @@ public class LevelManager : MonoBehaviour
 
             }
         }
+    }
+
+    void SetFixedTiles()
+    {
+        // todo
     }
 
     // r, c 0-based indexing
