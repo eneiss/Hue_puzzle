@@ -30,4 +30,16 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
         }
     }
 
+    public void Copy(FixedTilePattern source)
+    {
+        this.roffset = source.roffset;
+        this.coffset = source.coffset;
+        this.rendoffset = source.rendoffset;
+        this.cendoffset = source.cendoffset;
+        this.spacing = source.spacing;
+        this.repeat = source.repeat;
+
+        // dont copy tiles since they were not computed yet
+    }
+
 }

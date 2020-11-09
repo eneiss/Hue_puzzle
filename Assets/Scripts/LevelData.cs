@@ -32,7 +32,11 @@ public class LevelData : MonoBehaviour
 
         foreach (FixedTilePattern pattern in source.fixedTiles)
         {
-            this.fixedTiles.Add(pattern);
+            FixedTilePattern newPattern = gameObject.AddComponent<FixedTilePattern>();
+            // FixedTilePattern newPattern = new FixedTilePattern();
+            this.fixedTiles.Add(newPattern);
+            newPattern.Copy(pattern);
+
         }
     }
 
