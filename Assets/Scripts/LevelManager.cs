@@ -79,7 +79,9 @@ public class LevelManager : MonoBehaviour
     {
         foreach (GameObject tile in tiles)
         {
-            if ((tile.transform.localPosition.x == r) && (levelData.nbColumns - tile.transform.localPosition.y - 1 == c))
+            // !!!! conflicts with the rest of the program (differents coordinates)
+            // if ((tile.transform.localPosition.x == r) && (levelData.nbColumns - tile.transform.localPosition.y - 1 == c))
+            if ((tile.transform.localPosition.x == r) && (tile.transform.localPosition.y == c))
             {
                 return tile;
             }

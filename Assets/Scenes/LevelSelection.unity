@@ -790,7 +790,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689400, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: fixedTiles.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689400, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: nbRows
