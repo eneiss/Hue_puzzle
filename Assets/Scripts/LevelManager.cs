@@ -112,10 +112,21 @@ public class LevelManager : MonoBehaviour
         // TODO apply the moves of the level data to the grid
         foreach (string move in levelData.moves)
         {
-            Debug.Log(move);
             string[] splitString = move.Split(' ');
-            Debug.Log("Move : " + Int16.Parse(splitString[0]) + ", " + Int16.Parse(splitString[1]));
-            InvertTiles(Int16.Parse(splitString[0]), Int16.Parse(splitString[1]));
+            int r = Int16.Parse(splitString[0]);
+            int c = Int16.Parse(splitString[1]);
+            Debug.Log("Move : " + r + ", " + c);
+
+            TileScript ts = (TileScript) GetTile(r, c).GetComponent<TileScript>();
+
+            if (ts.GetFixed())
+            {
+                Debug.Log("WARNING: trying to apply a move on a fixed tile !");
+            } else
+            {
+                InvertTiles(r, c);
+                Debug.Log("Applying move at " + r + ", " + c);
+            }
         }
     }
 
@@ -155,7 +166,7 @@ public class LevelManager : MonoBehaviour
         bool allCorrect = true;
         foreach (GameObject tile in tiles)
         {
-            TileScript ts = (TileScript)tile.GetComponent(typeof(TileScript));
+            TileScript ts = (TileScript) tile.GetComponent(typeof(TileScript));
             if (ts.isInverted)
             {
                 allCorrect = false;

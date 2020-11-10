@@ -5,17 +5,63 @@ using UnityEngine;
 
 public class FixedTilePattern : MonoBehaviour, IEnumerable
 {
-
+    // pattern parameters
     public int roffset, coffset, rendoffset, cendoffset, spacing, repeat;
+
     // coordinates of each fixed tile: (row, column)
     List<Tuple<int, int>> tiles = null;
 
-    // computes the coordinates of each fixed tile in the pattern
+    // compute the coordinates of each fixed tile in the pattern
     void computeTileCoords()
     {
         tiles = new List<Tuple<int, int>>();
-        // todo
-        tiles.Add(new Tuple<int, int>(roffset, coffset));
+
+        GameObject levelDataObject = GameObject.FindWithTag("LevelData");
+        LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
+
+
+        /* TODO
+         * compute all row indexes where tiles are locked
+         * compute all column indexes (same)
+         * add to the list all combinations of rows & columns above
+         */
+
+        List<int> rIndexes = new List<int>();
+        List<int> cIndexes = new List<int>();
+
+        // rows
+        if (spacing > 0)
+        {
+            for (int i = roffset; i < levelData.nbRows - rendoffset; i += spacing)
+            {
+                rIndexes.Add(i);
+            }
+        } else
+        {
+            rIndexes.Add(roffset);
+        }
+
+
+        // columns
+        if (repeat > 0)
+        {
+            for (int i = coffset; i < levelData.nbColumns - cendoffset; i += repeat)
+            {
+                cIndexes.Add(i);
+            }
+        }
+        else
+        {
+            cIndexes.Add(coffset);
+        }
+
+        foreach (int r in rIndexes)
+        {
+            foreach (int c in cIndexes)
+            {
+                tiles.Add(new Tuple<int, int>(r, c));
+            }
+        }
     }
 
     public IEnumerator GetEnumerator()

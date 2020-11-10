@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 // using System.Diagnostics;
 using UnityEngine;
 
@@ -65,5 +66,10 @@ public class TileScript : MonoBehaviour
             this.isFixed = true;
             this.dot.SetActive(true);
         }
+    }
+
+    public bool GetFixed()
+    {
+        return isFixed;
     }
 }
