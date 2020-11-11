@@ -65,7 +65,7 @@ public class LevelManager : MonoBehaviour
 
                 // todo instantiate a tile with the right color & pos that is a child of the grid
                 GameObject tile = GameObject.Instantiate(tilePrefab, new Vector3(0f, 0f, 0f), Quaternion.identity, grid.transform);
-                tile.transform.localPosition = new Vector3(r, c, 0f);
+                tile.transform.localPosition = new Vector3(c, r, 0f);
                 tile.GetComponent<SpriteRenderer>().color = tileColor;
 
             }
