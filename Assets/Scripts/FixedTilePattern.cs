@@ -15,7 +15,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
     void computeTileCoords()
     {
         tiles = new List<Tuple<int, int>>();
-
+        
         GameObject levelDataObject = GameObject.FindWithTag("LevelData");
         LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
 

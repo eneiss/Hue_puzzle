@@ -8,6 +8,7 @@ TagManager:
   - LGM
   - LevelData
   - LevelManager
+  - Grid
   layers:
   - Default
   - TransparentFX

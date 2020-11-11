@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class LevelManager : MonoBehaviour
     GameObject[] tiles;
     List<(int dx, int dy)> neighbours;
     LevelData levelData;
+    double screenOccupation = 0.95;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,30 @@ public class LevelManager : MonoBehaviour
 
         ApplyMoves();
 
+        ScaleGrid();
+
+    }
+
+    void ScaleGrid()
+    {
+
+        Debug.Log("height : " + Screen.height + ", width : " + Screen.width);
+        Debug.Log("res h : " + Screen.currentResolution.height + ", w : " + Screen.currentResolution.width);
+
+        double screenRatio = Screen.height / Screen.width;
+
+        //double width = Camera.main.orthographicSize * 2.0 * Screen.width / Screen.height;
+        //float scale = (float) (width / screenOccupation);
+
+        // should be fine ??
+        //float scale = (float)((2.0 * Camera.main.orthographicSize * screenOccupation) / (screenRatio * levelData.nbColumns));
+
+        var height = 2 * Camera.main.orthographicSize;
+        var width = height * Camera.main.aspect;
+
+        float scale = (float)(width * screenOccupation / levelData.nbColumns);
+
+        GameObject.FindGameObjectWithTag("Grid").transform.localScale = new Vector3(scale, scale, scale);
     }
 
     void GenerateInitialGrid()
@@ -134,6 +160,8 @@ public class LevelManager : MonoBehaviour
 
     public void InvertTiles(int x, int y)
     {
+        Debug.Log("Click at " + x + ", " + y);
+
         bool allCorrect = true;
 
         foreach (GameObject tile in tiles)
