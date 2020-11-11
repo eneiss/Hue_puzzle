@@ -35,30 +35,24 @@ public class LevelManager : MonoBehaviour
 
         ApplyMoves();
 
-        ScaleGrid();
+        ScaleAndMoveGrid();
 
     }
 
-    void ScaleGrid()
+    // todo scale for portrait mode too ?
+    void ScaleAndMoveGrid()
     {
+        double height = 2 * Camera.main.orthographicSize;
+        double width = height * Camera.main.aspect;
 
-        Debug.Log("height : " + Screen.height + ", width : " + Screen.width);
-        Debug.Log("res h : " + Screen.currentResolution.height + ", w : " + Screen.currentResolution.width);
-
-        double screenRatio = Screen.height / Screen.width;
-
-        //double width = Camera.main.orthographicSize * 2.0 * Screen.width / Screen.height;
-        //float scale = (float) (width / screenOccupation);
-
-        // should be fine ??
-        //float scale = (float)((2.0 * Camera.main.orthographicSize * screenOccupation) / (screenRatio * levelData.nbColumns));
-
-        var height = 2 * Camera.main.orthographicSize;
-        var width = height * Camera.main.aspect;
+        GameObject grid = GameObject.FindGameObjectWithTag("Grid");
 
         float scale = (float)(width * screenOccupation / levelData.nbColumns);
+        float xGrid = (-((float)(width * screenOccupation)) + scale) / 2f;
+        float yGrid = (-((float)(height - scale*levelData.nbRows)) + scale) / 2f;
 
-        GameObject.FindGameObjectWithTag("Grid").transform.localScale = new Vector3(scale, scale, scale);
+        grid.transform.localScale = new Vector3(scale, scale, scale);
+        grid.transform.localPosition = new Vector3(xGrid, yGrid);
     }
 
     void GenerateInitialGrid()
