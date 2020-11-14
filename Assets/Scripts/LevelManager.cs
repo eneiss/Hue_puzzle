@@ -1,23 +1,18 @@
 ﻿using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-//using UnityEngine.UI;
-
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
     public GameObject grid;
     public GameObject tilePrefab;
+    public GameObject endCanvas;
+
     GameObject[] tiles;
     List<(int dx, int dy)> neighbours;
     LevelData levelData;
     double screenOccupation = 0.95;
+    bool cleared = false;
 
     // Start is called before the first frame update
     void Start()
@@ -56,30 +51,35 @@ public class LevelManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Collider2D[] colliders = new Collider2D[2];
-            ContactFilter2D filtre = new ContactFilter2D();
-
-            if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) == 1)
+            if (!cleared)
             {
-                foreach (Collider2D coll in colliders)
+                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Collider2D[] colliders = new Collider2D[2];
+                ContactFilter2D filtre = new ContactFilter2D();
+
+                if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) == 1)
                 {
-                    if (coll != null && coll.gameObject.CompareTag("Tile"))
+                    foreach (Collider2D coll in colliders)
                     {
-                        TileScript ts = (TileScript)coll.gameObject.GetComponent(typeof(TileScript));
-                        if (!ts.GetFixed())
+                        if (coll != null && coll.gameObject.CompareTag("Tile"))
                         {
-                            Debug.Log("inverting tiles");
-                            InvertTiles((int) coll.gameObject.transform.localPosition.x, (int) coll.gameObject.transform.localPosition.y);
+                            TileScript ts = (TileScript)coll.gameObject.GetComponent(typeof(TileScript));
+                            if (!ts.GetFixed())
+                            {
+                                Debug.Log("inverting tiles");
+                                InvertTiles((int)coll.gameObject.transform.localPosition.x, (int)coll.gameObject.transform.localPosition.y);
+                            }
                         }
                     }
                 }
-            }
-            else if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) > 1)
-            {
-                Debug.Log("More than one collider found !");
-            }
+                else if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) > 1)
+                {
+                    Debug.Log("More than one collider found !");
+                }
+
+            }   // level not cleared
+
+            // level cleared goes here
         }
 
     }
@@ -188,7 +188,7 @@ public class LevelManager : MonoBehaviour
 
             if (ts.GetFixed())
             {
-                Debug.Log("WARNING: trying to apply a move on a fixed tile !");
+                Debug.LogError("WARNING: trying to apply a move on a fixed tile !");
             } else
             {
                 InvertTiles(r, c);      // fixme c, r and not r, c ?
@@ -249,6 +249,8 @@ public class LevelManager : MonoBehaviour
     void EndLevel()
     {
         Debug.Log("GG!");
+        cleared = true;
+        endCanvas.SetActive(true);
     }
 
 }
