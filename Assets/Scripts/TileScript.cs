@@ -22,6 +22,7 @@ public class TileScript : MonoBehaviour
     }
 
     // Update is called once per frame
+    // TODO move to LevelManager.Update()
     void Update()
     {
         //foreach (Touch touch in Input.touches)

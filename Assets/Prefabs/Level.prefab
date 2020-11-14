@@ -79,6 +79,8 @@ MonoBehaviour:
   topRightColor: {r: 0.79167366, g: 0.15884654, b: 0.9150943, a: 0}
   bottomLeftColor: {r: 0.10484154, g: 0.8962264, b: 0.1804752, a: 0}
   bottomRightColor: {r: 0.8018868, g: 0.483754, b: 0.086240605, a: 0}
+  moves: []
+  fixedTiles: []
 --- !u!114 &9047477930630689403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.390566, b: 0.390566, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

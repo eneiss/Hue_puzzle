@@ -914,5 +914,17 @@ PrefabInstance:
       propertyPath: moves.Array.data[0]
       value: 2 2
       objectReference: {fileID: 0}
+    - target: {fileID: 9047477930630689403, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: m_Color.r
+      value: 0.39215684
+      objectReference: {fileID: 0}
+    - target: {fileID: 9047477930630689403, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: m_Color.g
+      value: 0.59453493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9047477930630689403, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
