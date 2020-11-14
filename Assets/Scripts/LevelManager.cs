@@ -1,8 +1,14 @@
 ﻿using System;
+//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+//using UnityEngine.UI;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
@@ -17,7 +23,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
 
-        // relative pos of neighbour tiles 
+        // relative pos of neighbour tiles + center tile INCLUDED
         neighbours = new List<(int dx, int dy)>
         {
             (-1, -1), (-1, 1), (1, -1), (1, 1),
@@ -38,6 +44,46 @@ public class LevelManager : MonoBehaviour
         ScaleAndMoveGrid();
 
     }
+
+    private void Update()
+    {
+
+        //foreach (Touch touch in Input.touches)
+        //{
+        //    if (touch.phase == TouchPhase.Ended)
+        //    {
+        //        Vector2 pos = Camera.main.ScreenToWorldPoint(touch.position);
+
+        if (Input.GetMouseButtonUp(0))
+        {
+
+            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Collider2D[] colliders = new Collider2D[2];
+            ContactFilter2D filtre = new ContactFilter2D();
+
+            if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) == 1)
+            {
+                foreach (Collider2D coll in colliders)
+                {
+                    if (coll != null && coll.gameObject.CompareTag("Tile"))
+                    {
+                        TileScript ts = (TileScript)coll.gameObject.GetComponent(typeof(TileScript));
+                        if (!ts.GetFixed())
+                        {
+                            Debug.Log("inverting tiles");
+                            InvertTiles((int) coll.gameObject.transform.localPosition.x, (int) coll.gameObject.transform.localPosition.y);
+                        }
+                    }
+                }
+            }
+            else if (Physics2D.OverlapPoint(pos, filtre.NoFilter(), colliders) > 1)
+            {
+                Debug.Log("More than one collider found !");
+            }
+        }
+
+    }
+
 
     // todo scale for portrait mode too ?
     void ScaleAndMoveGrid()
@@ -95,12 +141,11 @@ public class LevelManager : MonoBehaviour
         return new Color(red, green, blue, 1f);
     }
 
+    // todo optimize with a matrix ?
     GameObject GetTile(int r, int c)
     {
         foreach (GameObject tile in tiles)
         {
-            // !!!! conflicts with the rest of the program (differents coordinates)
-            // if ((tile.transform.localPosition.x == r) && (levelData.nbColumns - tile.transform.localPosition.y - 1 == c))
             if ((tile.transform.localPosition.x == r) && (tile.transform.localPosition.y == c))
             {
                 return tile;
@@ -137,7 +182,7 @@ public class LevelManager : MonoBehaviour
             string[] splitString = move.Split(' ');
             int r = Int16.Parse(splitString[0]);
             int c = Int16.Parse(splitString[1]);
-            Debug.Log("Move : " + r + ", " + c);
+            //Debug.Log("Move : " + r + ", " + c);
 
             TileScript ts = (TileScript) GetTile(r, c).GetComponent<TileScript>();
 
@@ -146,7 +191,7 @@ public class LevelManager : MonoBehaviour
                 Debug.Log("WARNING: trying to apply a move on a fixed tile !");
             } else
             {
-                InvertTiles(r, c);
+                InvertTiles(r, c);      // fixme c, r and not r, c ?
                 Debug.Log("Applying move at " + r + ", " + c);
             }
         }

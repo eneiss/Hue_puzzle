@@ -33,10 +33,10 @@ public class TileScript : MonoBehaviour
         //        Click();
         //    }
         //}
-        if (Input.GetMouseButtonUp(0) && gameObject.GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
-        {
-            Click();
-        }
+        //if (Input.GetMouseButtonUp(0) && gameObject.GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
+        //{
+        //    Click();
+        //}
     }
 
     void Click()
