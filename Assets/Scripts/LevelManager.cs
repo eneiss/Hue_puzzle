@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -251,6 +252,13 @@ public class LevelManager : MonoBehaviour
         Debug.Log("GG!");
         cleared = true;
         endCanvas.SetActive(true);
+    }
+
+    public void Back()
+    {
+        Debug.Log("Back");
+        Destroy(levelData.gameObject);
+        SceneManager.LoadScene("LevelSelection");
     }
 
 }
