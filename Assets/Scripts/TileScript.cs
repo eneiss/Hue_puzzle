@@ -24,13 +24,14 @@ public class TileScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Touch touch in Input.touches)
-        {
-            if (gameObject.GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(touch.position)))
-            {
-                Click();
-            }
-        }
+        //foreach (Touch touch in Input.touches)
+        //{
+        //    if (touch.phase == TouchPhase.Ended && gameObject.GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(touch.position)))
+        //    {
+        //        Debug.Log("touch id :" + touch.fingerId);
+        //        Click();
+        //    }
+        //}
         if (Input.GetMouseButtonUp(0) && gameObject.GetComponent<BoxCollider2D>().OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)))
         {
             Click();
@@ -39,8 +40,8 @@ public class TileScript : MonoBehaviour
 
     void Click()
     {
-        //Debug.Log("Click");
-        // InvertColor();
+        Debug.Log("Click on tile at " + gameObject.transform.position.x + ", " + gameObject.transform.position.y);
+
         if (!this.isFixed)
         {
             gameManager.InvertTiles((int)transform.localPosition.x, (int)transform.localPosition.y);
