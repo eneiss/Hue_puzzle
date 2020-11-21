@@ -48,6 +48,7 @@ public class LevelEditorWindow : EditorWindow
         return new Color(red, green, blue, 1f);
     }
 
+    /*
     private void ApplyColors()
     {
 
@@ -60,7 +61,8 @@ public class LevelEditorWindow : EditorWindow
                 tiles[h*width + w] = ComputeColor(w, h);
             }
         }
-    }
+    } 
+    */
 
     // called whenever the editor window is created
     public void OnEnable()
@@ -105,6 +107,31 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.BeginVertical();
         GUILayout.Label("Toolbar", EditorStyles.largeLabel);
 
+        // dimensions of the grid
+        // width
+        GUILayout.BeginHorizontal();
+        width = EditorGUILayout.IntField("Width", width);
+        if (GUILayout.Button("-") && width > 1)
+            width -= 1;
+        if (GUILayout.Button("+"))
+            width += 1;
+        GUILayout.EndHorizontal();
+
+        // height
+        GUILayout.BeginHorizontal();
+        height = EditorGUILayout.IntField("Height", height);
+        if (GUILayout.Button("-") && height > 1)
+            height -= 1;
+        if (GUILayout.Button("+"))
+            height += 1;
+        GUILayout.EndHorizontal();
+
+        if (width < 0)
+            width = 0;
+        if (height < 0)
+            height = 0;
+
+        // colors of the corners
         corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
         corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
         corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
