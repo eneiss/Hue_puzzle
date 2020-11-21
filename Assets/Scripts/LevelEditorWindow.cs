@@ -6,8 +6,11 @@ using UnityEditor;
 public class LevelEditorWindow : EditorWindow
 {
     private Color[] corners;
+    private Color[] tiles;
     private int width;
     private int height;
+
+    private Color selectedColor;
 
     [MenuItem("Custom/Level Editor")]
     public static void ShowLevelEditorWindow()
@@ -36,13 +39,18 @@ public class LevelEditorWindow : EditorWindow
         return (cHoriz + cVertic) / 2;
     }
 
-    private Color GetColor(int w, int h)
+    private Color ComputeColor(int w, int h)
     {
         float red = GetBarycenter(corners[0].r, corners[1].r, corners[2].r, corners[3].r, h, w);
         float green = GetBarycenter(corners[0].g, corners[1].g, corners[2].g, corners[3].g, h, w);
         float blue = GetBarycenter(corners[0].b, corners[1].b, corners[2].b, corners[3].b, h, w);
 
         return new Color(red, green, blue, 1f);
+    }
+
+    private void ApplyColors()
+    {
+
     }
 
     // called whenever the editor window is created
@@ -57,7 +65,7 @@ public class LevelEditorWindow : EditorWindow
         }
     }
 
-    private void OnGUI()
+    private void DoCanvas()
     {
         Color oldColor = GUI.color;
         GUILayout.BeginVertical();
@@ -65,20 +73,44 @@ public class LevelEditorWindow : EditorWindow
         for (int w = 0; w < width; ++w)
         {
             GUILayout.BeginHorizontal();
-            
+
             for (int h = 0; h < height; ++h)
             {
-                GUI.color = GetColor(w, h);
+                GUI.color = ComputeColor(w, h);
                 // reserve a rect in the GUI layout system
                 var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
                 // then use it
                 GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
-                Debug.Log(GetColor(w, h));
             }
             GUILayout.EndHorizontal();
         }
 
         GUILayout.EndVertical();
         GUI.color = oldColor;
+    }
+
+    private void DoControls()
+    {
+        GUILayout.BeginVertical();
+        GUILayout.Label("Toolbar", EditorStyles.largeLabel);
+
+        EditorGUILayout.ColorField("Bottom-left color", corners[0]);
+        EditorGUILayout.ColorField("Top-left color", corners[1]);
+        EditorGUILayout.ColorField("Top-right color", corners[2]);
+        EditorGUILayout.ColorField("Bottom-right color", corners[3]);
+
+        if (GUILayout.Button("Randomize")) { 
+        }
+
+        GUILayout.EndVertical();
+    }
+
+    private void OnGUI()
+    {
+        GUILayout.BeginHorizontal();
+        DoControls();
+
+        DoCanvas();
+        GUILayout.EndHorizontal();
     }
 }
