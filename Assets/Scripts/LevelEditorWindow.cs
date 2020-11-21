@@ -13,6 +13,8 @@ public class LevelEditorWindow : EditorWindow
     private Color selectedColor;
     const int MAX_HEIGHT = 20;
     const int MAX_WIDTH = 20;
+    const int MAX_COLOR_WIDTH = 100;
+    const int MAX_PANEL_WIDTH = 300;
 
     [MenuItem("Custom/Level Editor")]
     public static void ShowLevelEditorWindow()
@@ -112,7 +114,7 @@ public class LevelEditorWindow : EditorWindow
     // side tools panel
     private void DoControls()
     {
-        GUILayout.BeginVertical();
+        GUILayout.BeginVertical(GUILayout.MaxWidth(MAX_PANEL_WIDTH));
         GUILayout.Label("Toolbar", EditorStyles.largeLabel);
 
         // ----- dimensions of the grid
@@ -150,10 +152,18 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.Label("Colors", EditorStyles.label);
 
         // colors of the corners
-        corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
-        corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
-        corners[3] = EditorGUILayout.ColorField("Bottom-right color", corners[3]);
-        corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
+        GUILayout.BeginHorizontal();
+        corners[1] = EditorGUILayout.ColorField(corners[1], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
+        corners[2] = EditorGUILayout.ColorField(corners[2], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        corners[0] = EditorGUILayout.ColorField(corners[0], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
+        corners[3] = EditorGUILayout.ColorField(corners[3], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
+        GUILayout.EndHorizontal();
+        //corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
+        //corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
+        //corners[3] = EditorGUILayout.ColorField("Bottom-right color", corners[3]);
+        //corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
 
         // randomize button
         if (GUILayout.Button("Randomize")) {
