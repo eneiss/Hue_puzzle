@@ -11,6 +11,8 @@ public class LevelEditorWindow : EditorWindow
     private int height;
 
     private Color selectedColor;
+    const int MAX_HEIGHT = 20;
+    const int MAX_WIDTH = 20;
 
     [MenuItem("Custom/Level Editor")]
     public static void ShowLevelEditorWindow()
@@ -41,11 +43,16 @@ public class LevelEditorWindow : EditorWindow
 
     private Color ComputeColor(int w, int h)
     {
-        float red = GetBarycenter(corners[0].r, corners[1].r, corners[2].r, corners[3].r, h, w);
-        float green = GetBarycenter(corners[0].g, corners[1].g, corners[2].g, corners[3].g, h, w);
-        float blue = GetBarycenter(corners[0].b, corners[1].b, corners[2].b, corners[3].b, h, w);
+        float red = GetBarycenter(corners[2].r, corners[1].r, corners[0].r, corners[3].r, h, w);
+        float green = GetBarycenter(corners[2].g, corners[1].g, corners[0].g, corners[3].g, h, w);
+        float blue = GetBarycenter(corners[2].b, corners[1].b, corners[0].b, corners[3].b, h, w);
 
         return new Color(red, green, blue, 1f);
+    }
+
+    private int TileIndex(int w, int h)
+    {
+        return (MAX_WIDTH * h) + w;
     }
 
     /*
@@ -69,7 +76,7 @@ public class LevelEditorWindow : EditorWindow
     {
         width = height = 8;
         corners = new Color[4];
-        tiles = new Color[width * height];
+        tiles = new Color[MAX_WIDTH * MAX_HEIGHT];
 
         for (int i = 0; i < 4; ++i)
         {
@@ -82,14 +89,14 @@ public class LevelEditorWindow : EditorWindow
         Color oldColor = GUI.color;
         GUILayout.BeginVertical();
 
-        for (int w = 0; w < width; ++w)
+        for (int h = 0; h < height; ++h)
         {
             GUILayout.BeginHorizontal();
 
-            for (int h = 0; h < height; ++h)
+            for (int w = 0; w < width; ++w)
             {
-                tiles[h*width + w] = ComputeColor(w, h);
-                GUI.color = tiles[h * width + w];
+                tiles[TileIndex(w, h)] = ComputeColor(w, h);
+                GUI.color = tiles[TileIndex(w, h)];
                 // reserve a rect in the GUI layout system
                 var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
                 // then use it
@@ -102,18 +109,21 @@ public class LevelEditorWindow : EditorWindow
         GUI.color = oldColor;
     }
 
+    // side tools panel
     private void DoControls()
     {
         GUILayout.BeginVertical();
         GUILayout.Label("Toolbar", EditorStyles.largeLabel);
 
-        // dimensions of the grid
+        // ----- dimensions of the grid
+        GUILayout.Label("Dimensions", EditorStyles.label);
+
         // width
         GUILayout.BeginHorizontal();
         width = EditorGUILayout.IntField("Width", width);
         if (GUILayout.Button("-") && width > 1)
             width -= 1;
-        if (GUILayout.Button("+"))
+        if (GUILayout.Button("+") && width < MAX_WIDTH)
             width += 1;
         GUILayout.EndHorizontal();
 
@@ -122,28 +132,35 @@ public class LevelEditorWindow : EditorWindow
         height = EditorGUILayout.IntField("Height", height);
         if (GUILayout.Button("-") && height > 1)
             height -= 1;
-        if (GUILayout.Button("+"))
+        if (GUILayout.Button("+") && width < MAX_HEIGHT)
             height += 1;
         GUILayout.EndHorizontal();
 
+        // check for bounds
         if (width < 0)
             width = 0;
+        if (width > MAX_WIDTH)
+            width = MAX_WIDTH;
         if (height < 0)
             height = 0;
+        if (height > MAX_HEIGHT)
+            height = MAX_HEIGHT;
+
+        // ----- colors
+        GUILayout.Label("Colors", EditorStyles.label);
 
         // colors of the corners
-        corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
         corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
         corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
         corners[3] = EditorGUILayout.ColorField("Bottom-right color", corners[3]);
+        corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
 
+        // randomize button
         if (GUILayout.Button("Randomize")) {
             for (int i = 0; i < 4; ++i)
             {
                 corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
             }
-
-            //ApplyColors();
         }
 
         GUILayout.EndVertical();
