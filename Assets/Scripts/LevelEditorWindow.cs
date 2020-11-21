@@ -50,6 +50,8 @@ public class LevelEditorWindow : EditorWindow
 
     private void ApplyColors()
     {
+
+        Debug.Log("Applying new colors");
         for (int w = 0; w < width; ++w)
         {
 
@@ -103,10 +105,10 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.BeginVertical();
         GUILayout.Label("Toolbar", EditorStyles.largeLabel);
 
-        EditorGUILayout.ColorField("Bottom-left color", corners[0]);
-        EditorGUILayout.ColorField("Top-left color", corners[1]);
-        EditorGUILayout.ColorField("Top-right color", corners[2]);
-        EditorGUILayout.ColorField("Bottom-right color", corners[3]);
+        corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
+        corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
+        corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
+        corners[3] = EditorGUILayout.ColorField("Bottom-right color", corners[3]);
 
         if (GUILayout.Button("Randomize")) {
             for (int i = 0; i < 4; ++i)
@@ -114,12 +116,13 @@ public class LevelEditorWindow : EditorWindow
                 corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
             }
 
-            ApplyColors();
+            //ApplyColors();
         }
 
         GUILayout.EndVertical();
     }
 
+    // called once per frame -> no need to explicitely call ApplyColors() ?
     private void OnGUI()
     {
         GUILayout.BeginHorizontal();
