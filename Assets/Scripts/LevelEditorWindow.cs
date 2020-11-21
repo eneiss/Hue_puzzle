@@ -50,7 +50,14 @@ public class LevelEditorWindow : EditorWindow
 
     private void ApplyColors()
     {
+        for (int w = 0; w < width; ++w)
+        {
 
+            for (int h = 0; h < height; ++h)
+            {
+                tiles[h*width + w] = ComputeColor(w, h);
+            }
+        }
     }
 
     // called whenever the editor window is created
@@ -58,6 +65,7 @@ public class LevelEditorWindow : EditorWindow
     {
         width = height = 8;
         corners = new Color[4];
+        tiles = new Color[width * height];
 
         for (int i = 0; i < 4; ++i)
         {
@@ -76,7 +84,8 @@ public class LevelEditorWindow : EditorWindow
 
             for (int h = 0; h < height; ++h)
             {
-                GUI.color = ComputeColor(w, h);
+                tiles[h*width + w] = ComputeColor(w, h);
+                GUI.color = tiles[h * width + w];
                 // reserve a rect in the GUI layout system
                 var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
                 // then use it
@@ -99,7 +108,13 @@ public class LevelEditorWindow : EditorWindow
         EditorGUILayout.ColorField("Top-right color", corners[2]);
         EditorGUILayout.ColorField("Bottom-right color", corners[3]);
 
-        if (GUILayout.Button("Randomize")) { 
+        if (GUILayout.Button("Randomize")) {
+            for (int i = 0; i < 4; ++i)
+            {
+                corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
+            }
+
+            ApplyColors();
         }
 
         GUILayout.EndVertical();
