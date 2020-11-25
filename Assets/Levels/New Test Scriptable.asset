@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2f42768bdb16584095dbde14e38cfb5, type: 3}
   m_Name: New Test Scriptable
   m_EditorClassIdentifier: 
-  id: 0
+  levelId: 1
+  nbRows: 0
+  nbColumns: 0
+  topLeftColor: {r: 0, g: 0, b: 0, a: 0}
+  topRightColor: {r: 0, g: 0, b: 0, a: 0}
+  bottomLeftColor: {r: 0, g: 0, b: 0, a: 0}
+  bottomRightColor: {r: 0, g: 0, b: 0, a: 0}

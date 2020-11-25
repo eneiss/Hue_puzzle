@@ -102,6 +102,14 @@ public class LevelEditorWindow : EditorWindow
         return i;
     }
 
+    private bool TileIsLocked(int w, int h)
+    {
+        // TODO
+        if (w == 2 && h == 2)
+            return true;
+        return false;
+    }
+
     private void CopyLevelData(ScriptableLevel level)
     {
         if (this.id == 0) 
@@ -142,10 +150,20 @@ public class LevelEditorWindow : EditorWindow
             {
                 tiles[TileIndex(w, h)] = ComputeColor(w, h);
                 GUI.color = tiles[TileIndex(w, h)];
+
+                // draw a dot if the tile is locked
+                GUIContent tileContent = GUIContent.none;
+                if (TileIsLocked(w, h))
+                {
+                    // tileContent.text = "ALLO";          // cursed af - kept for fun only - DONT UNCOMMENT
+                    tileContent = new GUIContent("ALLO");
+                }
+
                 // reserve a rect in the GUI layout system
-                var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+                var rect = GUILayoutUtility.GetRect(tileContent, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
                 // then use it
                 GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+              
             }
             GUILayout.EndHorizontal();
         }
