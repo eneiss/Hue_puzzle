@@ -5,7 +5,12 @@ public class ScriptableLevel : ScriptableObject
 {
 
     public int levelId;
-    public Color tlColor;
+    public int nbRows;
+    public int nbColumns;
+    public Color topLeftColor;
+    public Color topRightColor;
+    public Color bottomLeftColor;
+    public Color bottomRightColor;
 
     private void OnEnable()
     {

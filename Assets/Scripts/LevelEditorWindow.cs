@@ -86,6 +86,22 @@ public class LevelEditorWindow : EditorWindow
         }
     }
 
+    private void SaveLevel(string path)
+    {
+        path = path.Replace(Application.dataPath, "Assets");
+        ScriptableLevel scriptableLevel = ScriptableObject.CreateInstance<ScriptableLevel>();
+        Debug.Log(scriptableLevel.levelId);
+        scriptableLevel.levelId = 42;
+        scriptableLevel.topLeftColor = this.corners[1];
+        scriptableLevel.topRightColor = this.corners[2];
+        scriptableLevel.bottomLeftColor = this.corners[0];
+        scriptableLevel.bottomRightColor = this.corners[3];
+        AssetDatabase.CreateAsset(scriptableLevel, path);
+        AssetDatabase.Refresh();
+
+        Debug.Log("File successfully saved at " + path);
+    }
+
     private void DoCanvas()
     {
         Color oldColor = GUI.color;
@@ -170,6 +186,17 @@ public class LevelEditorWindow : EditorWindow
             for (int i = 0; i < 4; ++i)
             {
                 corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
+            }
+        }
+
+        // save button
+        if (GUILayout.Button("Save as..."))
+        {
+            string path = EditorUtility.SaveFilePanel("Save level as", "", "level.asset", "asset");
+
+            if (path.Length !=0)
+            {
+                SaveLevel(path);
             }
         }
 

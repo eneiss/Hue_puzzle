@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f42768bdb16584095dbde14e38cfb5, type: 3}
+  m_Name: level with green
+  m_EditorClassIdentifier: 
+  levelId: 42
+  nbRows: 0
+  nbColumns: 0
+  topLeftColor: {r: 0.7175372, g: 0.79770124, b: 0.6326193, a: 1}
+  topRightColor: {r: 0.32185188, g: 0.9255923, b: 0.36177555, a: 1}
+  bottomLeftColor: {r: 0.85119355, g: 0.8786273, b: 0.50225276, a: 1}
+  bottomRightColor: {r: 0.14442517, g: 0.38202852, b: 0.35054377, a: 1}
