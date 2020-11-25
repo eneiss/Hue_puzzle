@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
+using System;
 
 public class LevelEditorWindow : EditorWindow
 {
@@ -9,8 +11,8 @@ public class LevelEditorWindow : EditorWindow
     private Color[] tiles;
     private int width;
     private int height;
+    private int id = 0;
 
-    private Color selectedColor;
     const int MAX_HEIGHT = 20;
     const int MAX_WIDTH = 20;
     const int MAX_COLOR_WIDTH = 100;
@@ -82,8 +84,37 @@ public class LevelEditorWindow : EditorWindow
 
         for (int i = 0; i < 4; ++i)
         {
-            corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
+            corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
         }
+    }
+
+    public static long DirCountAssets(DirectoryInfo d)
+    {
+        Debug.Log(d.FullName);
+        long i = 0;
+        // Add file sizes.
+        FileInfo[] fis = d.GetFiles();
+        foreach (FileInfo fi in fis)
+        {
+            if (fi.Extension.Equals(".asset", StringComparison.OrdinalIgnoreCase))
+                i++;
+        }
+        return i;
+    }
+
+    private void CopyLevelData(ScriptableLevel level)
+    {
+        if (this.id == 0) 
+        {           // default id
+            //string currentDir = Environment.CurrentDirectory;
+            DirectoryInfo directory = new DirectoryInfo("Assets/Levels");
+            this.id = (int) DirCountAssets(directory);      // should not overflow
+        }
+        level.levelId = this.id;
+        level.topLeftColor = this.corners[1];
+        level.topRightColor = this.corners[2];
+        level.bottomLeftColor = this.corners[0];
+        level.bottomRightColor = this.corners[3];
     }
 
     private void SaveLevel(string path)
@@ -91,11 +122,7 @@ public class LevelEditorWindow : EditorWindow
         path = path.Replace(Application.dataPath, "Assets");
         ScriptableLevel scriptableLevel = ScriptableObject.CreateInstance<ScriptableLevel>();
         Debug.Log(scriptableLevel.levelId);
-        scriptableLevel.levelId = 42;
-        scriptableLevel.topLeftColor = this.corners[1];
-        scriptableLevel.topRightColor = this.corners[2];
-        scriptableLevel.bottomLeftColor = this.corners[0];
-        scriptableLevel.bottomRightColor = this.corners[3];
+        CopyLevelData(scriptableLevel);
         AssetDatabase.CreateAsset(scriptableLevel, path);
         AssetDatabase.Refresh();
 
@@ -185,20 +212,22 @@ public class LevelEditorWindow : EditorWindow
         if (GUILayout.Button("Randomize")) {
             for (int i = 0; i < 4; ++i)
             {
-                corners[i] = new Color(Random.value, Random.value, Random.value, 1f);
+                corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
             }
         }
 
         // save button
         if (GUILayout.Button("Save as..."))
         {
-            string path = EditorUtility.SaveFilePanel("Save level as", "", "level.asset", "asset");
+            string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.asset", "asset");
 
             if (path.Length !=0)
             {
                 SaveLevel(path);
             }
         }
+
+        // TODO level id selector
 
         GUILayout.EndVertical();
     }
