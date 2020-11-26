@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FixedTilePattern : MonoBehaviour, IEnumerable
+[CreateAssetMenu]
+public class ScriptableTilePattern : ScriptableObject
 {
+
     // pattern parameters
     public int roffset, coffset, rendoffset, cendoffset, spacing, repeat;
 
@@ -15,7 +17,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
     void ComputeTileCoords()
     {
         tiles = new List<Tuple<int, int>>();
-        
+
         GameObject levelDataObject = GameObject.FindWithTag("LevelData");
         LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
 
@@ -36,7 +38,8 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
             {
                 rIndexes.Add(i);
             }
-        } else
+        }
+        else
         {
             rIndexes.Add(roffset);
         }

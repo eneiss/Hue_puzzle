@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu]
 public class ScriptableLevel : ScriptableObject
@@ -11,6 +13,8 @@ public class ScriptableLevel : ScriptableObject
     public Color topRightColor;
     public Color bottomLeftColor;
     public Color bottomRightColor;
+    public List<Tuple<int, int>> moves;
+    public List<ScriptableTilePattern> fixedTiles;
 
     private void OnEnable()
     {
