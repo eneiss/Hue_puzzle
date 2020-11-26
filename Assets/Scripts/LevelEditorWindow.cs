@@ -18,6 +18,8 @@ public class LevelEditorWindow : EditorWindow
     const int MAX_COLOR_WIDTH = 100;
     const int MAX_PANEL_WIDTH = 300;
 
+    Texture2D lockedTex;
+
     [MenuItem("Custom/Level Editor")]
     public static void ShowLevelEditorWindow()
     {
@@ -86,9 +88,31 @@ public class LevelEditorWindow : EditorWindow
         {
             corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
         }
+
+        SetLockedTexture();
     }
 
-    public static long DirCountAssets(DirectoryInfo d)
+    private void SetLockedTexture()
+    {
+        int size = 10;
+        lockedTex = new Texture2D(size, size);
+
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = 0; j < size; ++j)
+            {
+                if ((i+j)%4 < 2)
+                {
+                    lockedTex.SetPixel(i, j, new Color(0.9f, 0.9f, 0.9f, 1f));
+                } else
+                {
+                    lockedTex.SetPixel(i, j, new Color(1f, 0f, 0f, 1f));
+                }
+            }
+        }
+    }
+
+    private static long DirCountAssets(DirectoryInfo d)
     {
         Debug.Log(d.FullName);
         long i = 0;
@@ -105,7 +129,7 @@ public class LevelEditorWindow : EditorWindow
     private bool TileIsLocked(int w, int h)
     {
         // TODO
-        if (w == 2 && h == 2)
+        if ((w == 2 && h == 2) || (w == 5 && h == 3))
             return true;
         return false;
     }
@@ -151,19 +175,30 @@ public class LevelEditorWindow : EditorWindow
                 tiles[TileIndex(w, h)] = ComputeColor(w, h);
                 GUI.color = tiles[TileIndex(w, h)];
 
-                // draw a dot if the tile is locked
-                GUIContent tileContent = GUIContent.none;
-                if (TileIsLocked(w, h))
-                {
-                    // tileContent.text = "ALLO";          // cursed af - kept for fun only - DONT UNCOMMENT
-                    tileContent = new GUIContent("ALLO");
-                }
+                Texture2D tex = EditorGUIUtility.whiteTexture;
+
+                //// draw a dot if the tile is locked
+                //GUIContent tileContent = GUIContent.none;
+                //if (TileIsLocked(w, h))
+                //{
+                //    // tileContent.text = "ALLO";          // cursed af - kept for fun only - DONT UNCOMMENT (might override default behavior)
+                //    //tileContent = new GUIContent("ALLO");
+                //    // todo use EditorGUIUtility texture instead ?
+                //    //tex = Texture2D.grayTexture;
+                //    tex = lockedTex;
+                //    Debug.Log("w: " + tex.width + ", h: " + tex.height);
+                //}
 
                 // reserve a rect in the GUI layout system
-                var rect = GUILayoutUtility.GetRect(tileContent, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+                var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
                 // then use it
                 GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
-              
+                // draw borders around the tile if it is locked
+                if (TileIsLocked(w, h))
+                {
+                    GUI.DrawTexture(rect, tex, ScaleMode.StretchToFill, alphaBlend: true, imageAspect: 0, color: new Color(0f, 0f, 0f, 1f), 5f, 0f);
+                }
+
             }
             GUILayout.EndHorizontal();
         }
