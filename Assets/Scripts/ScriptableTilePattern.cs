@@ -9,6 +9,7 @@ public class ScriptableTilePattern : ScriptableObject
 
     // pattern parameters
     public int roffset, coffset, rendoffset, cendoffset, spacing, repeat;
+    public int width, height;
 
     // coordinates of each fixed tile: (row, column)
     List<Tuple<int, int>> tiles = null;
@@ -17,9 +18,6 @@ public class ScriptableTilePattern : ScriptableObject
     void ComputeTileCoords()
     {
         tiles = new List<Tuple<int, int>>();
-
-        GameObject levelDataObject = GameObject.FindWithTag("LevelData");
-        LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
 
 
         /* TODO
@@ -34,7 +32,7 @@ public class ScriptableTilePattern : ScriptableObject
         // rows
         if (spacing > 0)
         {
-            for (int i = roffset; i < levelData.nbRows - rendoffset; i += spacing)
+            for (int i = roffset; i < height - rendoffset; i += spacing)
             {
                 rIndexes.Add(i);
             }
@@ -48,7 +46,7 @@ public class ScriptableTilePattern : ScriptableObject
         // columns
         if (repeat > 0)
         {
-            for (int i = coffset; i < levelData.nbColumns - cendoffset; i += repeat)
+            for (int i = coffset; i < width - cendoffset; i += repeat)
             {
                 cIndexes.Add(i);
             }
@@ -130,4 +128,15 @@ public class ScriptableTilePattern : ScriptableObject
         ComputeTileCoords();
     }
 
+    public void SetWidth(int width)
+    {
+        this.width = width;
+        ComputeTileCoords();
+    }
+
+    public void SetHeight(int height)
+    {
+        this.height = height;
+        ComputeTileCoords();
+    }
 }

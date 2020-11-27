@@ -157,6 +157,8 @@ public class LevelEditorWindow : EditorWindow
         level.topRightColor = this.corners[2];
         level.bottomLeftColor = this.corners[0];
         level.bottomRightColor = this.corners[3];
+
+        level.fixedTiles = this.patterns;
     }
 
     private void SaveLevel(string path)
@@ -187,7 +189,7 @@ public class LevelEditorWindow : EditorWindow
         // coffset
         GUILayout.BeginHorizontal();
         pattern.SetCoffset(EditorGUILayout.IntField("Col. Offset", pattern.coffset));
-        if (GUILayout.Button("-") && pattern.coffset > 1)
+        if (GUILayout.Button("-") && pattern.coffset > 0)
             pattern.SetCoffset(pattern.coffset - 1);
         if (GUILayout.Button("+") && pattern.coffset < height - 1)
             pattern.SetCoffset(pattern.coffset + 1);
@@ -196,7 +198,7 @@ public class LevelEditorWindow : EditorWindow
         // roffset
         GUILayout.BeginHorizontal();
         pattern.SetRoffset(EditorGUILayout.IntField("Row Offset", pattern.roffset));
-        if (GUILayout.Button("-") && pattern.roffset > 1)
+        if (GUILayout.Button("-") && pattern.roffset > 0)
             pattern.SetRoffset(pattern.roffset - 1);
         if (GUILayout.Button("+") && pattern.roffset < width - 1)
             pattern.SetRoffset(pattern.roffset + 1);
@@ -300,9 +302,21 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.BeginHorizontal();
         height = EditorGUILayout.IntField("Height", height);
         if (GUILayout.Button("-") && height > 1)
+        {
             height -= 1;
+            foreach (ScriptableTilePattern pattern in patterns)
+            {
+                pattern.SetHeight(height);
+            }
+        }
         if (GUILayout.Button("+") && width < MAX_HEIGHT)
+        {
             height += 1;
+            foreach (ScriptableTilePattern pattern in patterns)
+            {
+                pattern.SetHeight(height);
+            }
+        }
         GUILayout.EndHorizontal();
 
         // check for bounds
@@ -355,6 +369,8 @@ public class LevelEditorWindow : EditorWindow
         if (GUILayout.Button("+"))
         {
             patterns.Add(ScriptableObject.CreateInstance<ScriptableTilePattern>());
+            patterns[patterns.Count - 1].SetHeight(height);
+            patterns[patterns.Count - 1].SetWidth(width);
         }
 
         // save button
