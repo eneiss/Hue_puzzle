@@ -12,6 +12,7 @@ public class LevelEditorWindow : EditorWindow
     private int width;
     private int height;
     private int id = 0;
+    private List<ScriptableTilePattern> patterns;
 
     const int MAX_HEIGHT = 20;
     const int MAX_WIDTH = 20;
@@ -80,9 +81,10 @@ public class LevelEditorWindow : EditorWindow
     // called whenever the editor window is created
     public void OnEnable()
     {
-        width = height = 8;
+        width = height = 10;
         corners = new Color[4];
         tiles = new Color[MAX_WIDTH * MAX_HEIGHT];
+        patterns = new List<ScriptableTilePattern>();
 
         for (int i = 0; i < 4; ++i)
         {
@@ -128,9 +130,17 @@ public class LevelEditorWindow : EditorWindow
 
     private bool TileIsLocked(int w, int h)
     {
-        // TODO
-        if ((w == 2 && h == 2) || (w == 5 && h == 3))
-            return true;
+        foreach (ScriptableTilePattern pattern in patterns)
+        {
+            foreach (Tuple<int, int> tuple in pattern)
+            {
+                if (tuple.Item1 == h && tuple.Item2 == w)
+                {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -161,6 +171,75 @@ public class LevelEditorWindow : EditorWindow
         Debug.Log("File successfully saved at " + path);
     }
 
+    private void DoPatternAt(int i)
+    {
+        ScriptableTilePattern pattern = patterns[i];
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Pattern " + (i + 1), EditorStyles.label);
+        if (GUILayout.Button("-"))
+        {
+            // todo confirm window
+            patterns.RemoveAt(i);
+        }
+        GUILayout.EndHorizontal();
+
+        // coffset
+        GUILayout.BeginHorizontal();
+        pattern.SetCoffset(EditorGUILayout.IntField("Col. Offset", pattern.coffset));
+        if (GUILayout.Button("-") && pattern.coffset > 1)
+            pattern.SetCoffset(pattern.coffset - 1);
+        if (GUILayout.Button("+") && pattern.coffset < height - 1)
+            pattern.SetCoffset(pattern.coffset + 1);
+        GUILayout.EndHorizontal();
+
+        // roffset
+        GUILayout.BeginHorizontal();
+        pattern.SetRoffset(EditorGUILayout.IntField("Row Offset", pattern.roffset));
+        if (GUILayout.Button("-") && pattern.roffset > 1)
+            pattern.SetRoffset(pattern.roffset - 1);
+        if (GUILayout.Button("+") && pattern.roffset < width - 1)
+            pattern.SetRoffset(pattern.roffset + 1);
+        GUILayout.EndHorizontal();
+
+        // cendoffset
+        GUILayout.BeginHorizontal();
+        pattern.SetCendoffset(EditorGUILayout.IntField("Col. End Offset", pattern.cendoffset));
+        if (GUILayout.Button("-") && pattern.cendoffset > pattern.coffset)
+            pattern.SetCendoffset(pattern.cendoffset - 1);
+        if (GUILayout.Button("+") && pattern.cendoffset < height - 1)
+            pattern.SetCendoffset(pattern.cendoffset + 1);
+        GUILayout.EndHorizontal();
+
+        // rendoffset
+        GUILayout.BeginHorizontal();
+        pattern.SetRendoffset(EditorGUILayout.IntField("Row End Offset", pattern.rendoffset));
+        if (GUILayout.Button("-") && pattern.rendoffset > pattern.roffset)
+            pattern.SetRendoffset(pattern.rendoffset - 1);
+        if (GUILayout.Button("+") && pattern.rendoffset < width - 1)
+            pattern.SetRendoffset(pattern.rendoffset + 1);
+        GUILayout.EndHorizontal();
+
+        // spacing
+        GUILayout.BeginHorizontal();
+        pattern.SetSpacing(EditorGUILayout.IntField("Spacing", pattern.spacing));
+        if (GUILayout.Button("-") && pattern.spacing > -1)
+            pattern.SetSpacing(pattern.spacing - 1);
+        if (GUILayout.Button("+"))
+            pattern.SetSpacing(pattern.spacing + 1);
+        GUILayout.EndHorizontal();
+
+        // repeat
+        GUILayout.BeginHorizontal();
+        pattern.SetRepeat(EditorGUILayout.IntField("Repeat", pattern.repeat));
+        if (GUILayout.Button("-") && pattern.repeat > -1)
+            pattern.SetRepeat(pattern.repeat - 1);
+        if (GUILayout.Button("+"))
+            pattern.SetRepeat(pattern.repeat + 1);
+        GUILayout.EndHorizontal();
+
+    }
+
     private void DoCanvas()
     {
         Color oldColor = GUI.color;
@@ -176,18 +255,6 @@ public class LevelEditorWindow : EditorWindow
                 GUI.color = tiles[TileIndex(w, h)];
 
                 Texture2D tex = EditorGUIUtility.whiteTexture;
-
-                //// draw a dot if the tile is locked
-                //GUIContent tileContent = GUIContent.none;
-                //if (TileIsLocked(w, h))
-                //{
-                //    // tileContent.text = "ALLO";          // cursed af - kept for fun only - DONT UNCOMMENT (might override default behavior)
-                //    //tileContent = new GUIContent("ALLO");
-                //    // todo use EditorGUIUtility texture instead ?
-                //    //tex = Texture2D.grayTexture;
-                //    tex = lockedTex;
-                //    Debug.Log("w: " + tex.width + ", h: " + tex.height);
-                //}
 
                 // reserve a rect in the GUI layout system
                 var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
@@ -211,7 +278,11 @@ public class LevelEditorWindow : EditorWindow
     private void DoControls()
     {
         GUILayout.BeginVertical(GUILayout.MaxWidth(MAX_PANEL_WIDTH));
+
         GUILayout.Label("Toolbar", EditorStyles.largeLabel);
+
+        // horizontal line separator
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
         // ----- dimensions of the grid
         GUILayout.Label("Dimensions", EditorStyles.label);
@@ -244,6 +315,9 @@ public class LevelEditorWindow : EditorWindow
         if (height > MAX_HEIGHT)
             height = MAX_HEIGHT;
 
+        // horizontal line separator
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
         // ----- colors
         GUILayout.Label("Colors", EditorStyles.label);
 
@@ -256,17 +330,31 @@ public class LevelEditorWindow : EditorWindow
         corners[0] = EditorGUILayout.ColorField(corners[0], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
         corners[3] = EditorGUILayout.ColorField(corners[3], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
         GUILayout.EndHorizontal();
-        //corners[1] = EditorGUILayout.ColorField("Top-left color", corners[1]);
-        //corners[2] = EditorGUILayout.ColorField("Top-right color", corners[2]);
-        //corners[3] = EditorGUILayout.ColorField("Bottom-right color", corners[3]);
-        //corners[0] = EditorGUILayout.ColorField("Bottom-left color", corners[0]);
 
-        // randomize button
-        if (GUILayout.Button("Randomize")) {
+        // randomize colors button
+        if (GUILayout.Button("Randomize Colors")) {
             for (int i = 0; i < 4; ++i)
             {
                 corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
             }
+        }
+
+        // horizontal line separator
+        EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+
+        // ----- fixed tiles
+        GUILayout.Label("Fixed Tiles", EditorStyles.label);
+
+        // render each pattern
+        for (int i = 0; i < patterns.Count; ++i)
+        {
+            DoPatternAt(i);
+        }
+
+        // add new pattern
+        if (GUILayout.Button("+"))
+        {
+            patterns.Add(ScriptableObject.CreateInstance<ScriptableTilePattern>());
         }
 
         // save button

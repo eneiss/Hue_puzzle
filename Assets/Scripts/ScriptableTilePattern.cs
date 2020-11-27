@@ -92,4 +92,42 @@ public class ScriptableTilePattern : ScriptableObject
         // dont copy tiles since they were not computed yet
     }
 
+
+    // ----- setters to use when needing to compute tile coordinates at every modification
+    public void SetRoffset(int roffset)
+    {
+        this.roffset = roffset;
+        ComputeTileCoords();
+    }
+
+    public void SetCoffset(int coffset)
+    {
+        this.coffset = coffset;
+        ComputeTileCoords();
+    }
+
+    public void SetRendoffset(int rendoffset)
+    {
+        this.rendoffset = rendoffset;
+        ComputeTileCoords();
+    }
+
+    public void SetCendoffset(int cendoffset)
+    {
+        this.cendoffset = cendoffset;
+        ComputeTileCoords();
+    }
+
+    public void SetSpacing(int spacing)
+    {
+        this.spacing = spacing;
+        ComputeTileCoords();
+    }
+
+    public void SetRepeat(int repeat)
+    {
+        this.repeat = repeat;
+        ComputeTileCoords();
+    }
+
 }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f42768bdb16584095dbde14e38cfb5, type: 3}
+  m_Name: cool colors
+  m_EditorClassIdentifier: 
+  levelId: 2
+  nbRows: 0
+  nbColumns: 0
+  topLeftColor: {r: 0.14394356, g: 0.65402013, b: 0.5739148, a: 1}
+  topRightColor: {r: 0.24927047, g: 0.059140332, b: 0.3456098, a: 1}
+  bottomLeftColor: {r: 0.44515902, g: 0.6970064, b: 0.21529737, a: 1}
+  bottomRightColor: {r: 0.40542704, g: 0.039312128, b: 0.5687941, a: 1}
+  fixedTiles: []
