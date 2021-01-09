@@ -5,6 +5,16 @@ using UnityEditor;
 using System.IO;
 using System;
 
+/*
+ * TODO
+ *  - use intrisic data structures to store fixed tiles patterns (to avoid
+ *  shallow copy issues) -> use arrays
+ *  
+ *  - get user click on the window, determine if some non-fixed tile was
+ *  clicked and invert it if needed + store the click's position in the grid
+ * 
+ * */
+
 public class LevelEditorWindow : EditorWindow
 {
     private Color[] corners;
@@ -13,6 +23,7 @@ public class LevelEditorWindow : EditorWindow
     private int height;
     private int id = 0;
     private List<ScriptableTilePattern> patterns;
+    private bool[] tilesInversion;
 
     const int MAX_HEIGHT = 20;
     const int MAX_WIDTH = 20;
@@ -20,6 +31,7 @@ public class LevelEditorWindow : EditorWindow
     const int MAX_PANEL_WIDTH = 300;
 
     Texture2D lockedTex;
+    private Event curEvt;
 
     [MenuItem("Custom/Level Editor")]
     public static void ShowLevelEditorWindow()
@@ -27,6 +39,28 @@ public class LevelEditorWindow : EditorWindow
         // find window if existing, else create it
         EditorWindow window = GetWindow<LevelEditorWindow>();
         window.titleContent = new GUIContent("Level Editor");
+    }
+
+    // called whenever the editor window is created
+    public void OnEnable()
+    {
+        width = height = 10;
+        corners = new Color[4];
+        tiles = new Color[MAX_WIDTH * MAX_HEIGHT];
+        patterns = new List<ScriptableTilePattern>();
+
+        for (int i = 0; i < 4; ++i)
+        {
+            corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
+        }
+
+        tilesInversion = new bool[MAX_WIDTH * MAX_HEIGHT];
+        for (int i = 0; i < MAX_WIDTH * MAX_HEIGHT; ++i)
+        {
+            tilesInversion[i] = false;
+        }
+
+        SetLockedTexture();
     }
 
     // call for each rbg component and get the final value for the component at pos r, c
@@ -77,22 +111,6 @@ public class LevelEditorWindow : EditorWindow
         }
     } 
     */
-
-    // called whenever the editor window is created
-    public void OnEnable()
-    {
-        width = height = 10;
-        corners = new Color[4];
-        tiles = new Color[MAX_WIDTH * MAX_HEIGHT];
-        patterns = new List<ScriptableTilePattern>();
-
-        for (int i = 0; i < 4; ++i)
-        {
-            corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
-        }
-
-        SetLockedTexture();
-    }
 
     private void SetLockedTexture()
     {
@@ -158,6 +176,7 @@ public class LevelEditorWindow : EditorWindow
         level.bottomLeftColor = this.corners[0];
         level.bottomRightColor = this.corners[3];
 
+        // fixme shallow copy not working :/
         level.fixedTiles = this.patterns;
     }
 
@@ -173,6 +192,7 @@ public class LevelEditorWindow : EditorWindow
         Debug.Log("File successfully saved at " + path);
     }
 
+    // scriptable tile pattern editor layout
     private void DoPatternAt(int i)
     {
         ScriptableTilePattern pattern = patterns[i];
@@ -207,18 +227,18 @@ public class LevelEditorWindow : EditorWindow
         // cendoffset
         GUILayout.BeginHorizontal();
         pattern.SetCendoffset(EditorGUILayout.IntField("Col. End Offset", pattern.cendoffset));
-        if (GUILayout.Button("-") && pattern.cendoffset > pattern.coffset)
+        if (GUILayout.Button("-") && pattern.cendoffset > 0)
             pattern.SetCendoffset(pattern.cendoffset - 1);
-        if (GUILayout.Button("+") && pattern.cendoffset < height - 1)
+        if (GUILayout.Button("+") && height - pattern.cendoffset > pattern.coffset + 1)
             pattern.SetCendoffset(pattern.cendoffset + 1);
         GUILayout.EndHorizontal();
 
         // rendoffset
         GUILayout.BeginHorizontal();
         pattern.SetRendoffset(EditorGUILayout.IntField("Row End Offset", pattern.rendoffset));
-        if (GUILayout.Button("-") && pattern.rendoffset > pattern.roffset)
+        if (GUILayout.Button("-") && pattern.rendoffset > 0)
             pattern.SetRendoffset(pattern.rendoffset - 1);
-        if (GUILayout.Button("+") && pattern.rendoffset < width - 1)
+        if (GUILayout.Button("+") && width - pattern.rendoffset > pattern.roffset + 1)
             pattern.SetRendoffset(pattern.rendoffset + 1);
         GUILayout.EndHorizontal();
 
@@ -259,7 +279,10 @@ public class LevelEditorWindow : EditorWindow
                 Texture2D tex = EditorGUIUtility.whiteTexture;
 
                 // reserve a rect in the GUI layout system
-                var rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+                Rect rect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+                // debug
+                // Debug.Log("Rect: " + rect.x + ", " + rect.y);
+                
                 // then use it
                 GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
                 // draw borders around the tile if it is locked
@@ -345,6 +368,8 @@ public class LevelEditorWindow : EditorWindow
         corners[3] = EditorGUILayout.ColorField(corners[3], GUILayout.MaxWidth(MAX_COLOR_WIDTH));
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.Space();
+
         // randomize colors button
         if (GUILayout.Button("Randomize Colors")) {
             for (int i = 0; i < 4; ++i)
@@ -358,6 +383,8 @@ public class LevelEditorWindow : EditorWindow
 
         // ----- fixed tiles
         GUILayout.Label("Fixed Tiles", EditorStyles.label);
+
+        EditorGUILayout.Space();
 
         // render each pattern
         for (int i = 0; i < patterns.Count; ++i)
@@ -389,11 +416,53 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.EndVertical();
     }
 
+    // event handler from https://answers.unity.com/questions/62859/left-click-up-event-in-editor.html
+    void checkForRelease()
+    {
+        Event e = Event.current;
+        int controlID = GUIUtility.GetControlID(FocusType.Passive);
+        switch (e.GetTypeForControl(controlID))
+        {
+            case EventType.MouseDown:
+                GUIUtility.hotControl = controlID;
+                e.Use();
+                break;
+            case EventType.MouseUp:
+                GUIUtility.hotControl = 0;
+                e.Use();
+                Debug.Log("up !");
+                break;
+            case EventType.MouseDrag:
+                GUIUtility.hotControl = controlID;
+                e.Use();
+                break;
+        }
+    }
+
+    void HandleMouseUp(Event evt)
+    {
+        Debug.Log(GUILayoutUtility.GetLastRect().x + GUILayoutUtility.GetLastRect().width);
+        Debug.Log("Handling mouse up on editor window at position " + evt.mousePosition.x + ", " + evt.mousePosition.y);
+        Debug.Log("Window width: " + position.width + ", height: " + position.height);
+
+        int x = (int) ( ((int)evt.mousePosition.x - MAX_PANEL_WIDTH) * width / (position.width - MAX_PANEL_WIDTH) );
+        int y = (int) ( (int)evt.mousePosition.y * height / position.height);
+        Debug.Log("Click at " + x + ", " + y);
+    }
+
     // called once per frame -> no need to explicitely call ApplyColors() ?
     private void OnGUI()
     {
         GUILayout.BeginHorizontal();
         DoControls();
+
+
+        curEvt = Event.current;
+        // Debug.Log(curEvt.type);
+        if(curEvt.type == EventType.MouseUp)
+        {
+            HandleMouseUp(curEvt);
+        }
 
         DoCanvas();
         GUILayout.EndHorizontal();
