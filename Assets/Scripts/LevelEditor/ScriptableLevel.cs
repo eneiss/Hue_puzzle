@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class LevelInfo
+{
+    public const int MaxHeight = 20;
+    public const int MaxWidth = 20;
+}
+
 [CreateAssetMenu]
 public class ScriptableLevel : ScriptableObject
 {

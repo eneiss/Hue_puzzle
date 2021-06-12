@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// DONT COMMIT CHANGES HERE!!!
+
 public class FixedTilePattern : MonoBehaviour, IEnumerable
 {
     // pattern parameters
     public int roffset, coffset, rendoffset, cendoffset, spacing, repeat;
 
     // coordinates of each fixed tile: (row, column)
-    List<Tuple<int, int>> tiles = null;
+    public List<Tuple<int, int>> tiles = null;
 
     // compute the coordinates of each fixed tile in the pattern
     void ComputeTileCoords()
@@ -19,8 +21,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
         GameObject levelDataObject = GameObject.FindWithTag("LevelData");
         LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
 
-
-        /* TODO
+        /* 
          * compute all row indexes where tiles are locked
          * compute all column indexes (same)
          * add to the list all combinations of rows & columns above
@@ -31,7 +32,7 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
 
         // rows
         if (spacing > 0)
-        {
+        {  
             for (int i = roffset; i < levelData.nbRows - rendoffset; i += spacing)
             {
                 rIndexes.Add(i);
