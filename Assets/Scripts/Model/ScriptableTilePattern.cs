@@ -8,7 +8,7 @@ public class ScriptableTilePattern : ScriptableObject
 {
 
     // pattern parameters
-    // TODO: rename these shitty-named variables
+    // TODO: rename spacing & repeat
     public int topMargin, leftMargin, bottomMargin, rightMargin, spacing, repeat;
     public int width, height;
 
