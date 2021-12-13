@@ -8,8 +8,8 @@ public class ScriptableTilePattern : ScriptableObject
 {
 
     // pattern parameters
-    // TODO: rename spacing & repeat
-    public int topMargin, leftMargin, bottomMargin, rightMargin, spacing, repeat;
+    [SerializeField]
+    public int topMargin, leftMargin, bottomMargin, rightMargin, verticalStep, horizontalStep;
     public int width, height;
 
     // coordinates of each fixed tile: (row, column)
@@ -39,9 +39,9 @@ public class ScriptableTilePattern : ScriptableObject
 
         // TODO: see if this could be sipmlified
         // rows
-        if (spacing > 0)
+        if (verticalStep > 0)
         {
-            for (int i = topMargin; i < height - bottomMargin; i += spacing)
+            for (int i = topMargin; i < height - bottomMargin; i += verticalStep)
             {
                 rIndexes.Add(i);
             }
@@ -53,9 +53,9 @@ public class ScriptableTilePattern : ScriptableObject
 
 
         // columns
-        if (repeat > 0)
+        if (horizontalStep > 0)
         {
-            for (int i = leftMargin; i < width - rightMargin; i += repeat)
+            for (int i = leftMargin; i < width - rightMargin; i += horizontalStep)
             {
                 cIndexes.Add(i);
             }
@@ -94,8 +94,8 @@ public class ScriptableTilePattern : ScriptableObject
         this.leftMargin = source.coffset;
         this.bottomMargin = source.rendoffset;
         this.rightMargin = source.cendoffset;
-        this.spacing = source.spacing;
-        this.repeat = source.repeat;
+        this.verticalStep = source.spacing;
+        this.horizontalStep = source.repeat;
 
         // dont copy tiles since they were not computed yet
     }
@@ -128,13 +128,13 @@ public class ScriptableTilePattern : ScriptableObject
 
     public void SetSpacing(int spacing)
     {
-        this.spacing = spacing;
+        this.verticalStep = spacing;
         ComputeTileCoords();
     }
 
     public void SetRepeat(int repeat)
     {
-        this.repeat = repeat;
+        this.horizontalStep = repeat;
         ComputeTileCoords();
     }
 

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: check if colors are correctly computed when the size of the grid changes
+
 public class LevelInfo
 {
     public const int MaxHeight = 20;
@@ -16,15 +18,26 @@ public class LevelInfo
 public class LevelEditorManager
 {
     // public
-    public Color[] tiles;
-    public int width;
-    public int height;
+    [NonSerialized]
+    public Color[] tiles;       // TODO: use computed/observable properties ?
     public int id = 0;
+    [SerializeField]
     public List<ScriptableTilePattern> patterns;
     public bool[] tilesInversion;
 
     // private
+    [SerializeField]
     private Color[] corners;
+    [SerializeField]
+    private int width;
+    [SerializeField]
+    private int height;
+
+    private List<(int dx, int dy)> neighbours = new List<(int dx, int dy)>
+        {
+            (-1, -1), (-1, 1), (1, -1), (1, 1),
+            (0, 1), (0, -1), (1, 0), (-1, 0)
+        };
 
     // computed properties (wrappers for corners[])
     /* REFERENCE:
@@ -36,23 +49,63 @@ public class LevelEditorManager
     public Color BottomLeft
     {
         get { return this.corners[0]; }
-        set { this.corners[0] = value; }
+        set {
+            this.corners[0] = value;
+            ComputeTileColors();
+        }
     }
 
     public Color TopLeft
     {
         get { return this.corners[1]; }
-        set { this.corners[1] = value; }
+        set { 
+            this.corners[1] = value;
+            ComputeTileColors();
+        }
     }
     public Color TopRight
     {
         get { return this.corners[2]; }
-        set { this.corners[2] = value; }
+        set { 
+            this.corners[2] = value;
+            ComputeTileColors();
+        }
     }
     public Color BottomRight
     {
         get { return this.corners[3]; }
-        set { this.corners[3] = value; }
+        set { 
+            this.corners[3] = value;
+            ComputeTileColors();
+        }
+    }
+
+    // public computed width & height (check for bounds)
+    public int Width
+    {
+        get { return this.width; }
+        set {
+            if (value < 1)
+                this.width = 1;
+            else if (value > LevelInfo.MaxWidth)
+                this.width = LevelInfo.MaxWidth;
+            else
+                this.width = value;
+        }
+    }
+
+    public int Height
+    {
+        get { return this.height; }
+        set
+        {
+            if (value < 1)
+                this.height = 1;
+            else if (value > LevelInfo.MaxHeight)
+                this.height = LevelInfo.MaxHeight;
+            else
+                this.height = value;
+        }
     }
 
     // -------------- methods
@@ -77,11 +130,51 @@ public class LevelEditorManager
         }
     }
 
+    public void RemovePatternAt(int i)
+    {
+        this.patterns.RemoveAt(i);
+    }
+
     public void RandomizeColors()
     {
         for (int i = 0; i < 4; ++i)
         {
-            corners[i] = RandomColor();
+            corners[i] = this.RandomColor();
+        }
+
+        ComputeTileColors();
+    }
+
+    // call this whenever the size, color or inversion of the board has changed
+    public void ComputeTileColors()
+    {
+        for (int h = 0; h < height; ++h)
+        {
+            for (int w = 0; w < width; ++w)
+            {
+                tiles[TileIndex(w, h)] = ComputeColor(w, h);
+            }
+        }
+    }
+
+    public void InvertTilesAround(int w, int h)
+    {
+        int index;
+        // TODO OOB check
+        if (!TileIsLocked(w, h))
+        {
+            //Debug.Log("Inverting around " + w + ", " + h);
+            foreach ((int dw, int dh) in neighbours) {
+                index = TileIndex(w + dw, h + dh);
+                if (!TileIsLocked(w + dw, h + dh) && index >= 0) {      // index = -1 <=> OOB
+                    //Debug.Log("Inverting tile " + (w + dw) + ", " + (h + dh));
+                    tilesInversion[index] = !tilesInversion[index];
+                };
+            }
+
+            tilesInversion[TileIndex(w, h)] = !tilesInversion[TileIndex(w, h)];
+        } else {
+            Debug.Log("Cant invert locked tile");
         }
     }
 
@@ -94,7 +187,7 @@ public class LevelEditorManager
         return new Color(red, green, blue, 1f);
     }
 
-    private bool TileIsLocked(int w, int h)
+    public bool TileIsLocked(int w, int h)
     {
         foreach (ScriptableTilePattern pattern in patterns)
         {
@@ -110,8 +203,11 @@ public class LevelEditorManager
         return false;
     }
 
-    private int TileIndex(int w, int h)
+    // OOB check : -1 if OOB
+    public int TileIndex(int w, int h)
     {
+        if (w < 0 || w >= width || h < 0 || h >= height)
+            return -1;
         return (LevelInfo.MaxWidth * h) + w;
     }
 

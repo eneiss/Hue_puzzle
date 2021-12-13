@@ -22,19 +22,10 @@ using System;
 
 public class LevelEditorWindow : EditorWindow
 {
-    // TODO: remove this
-    private Color[] corners;
-    private Color[] tiles;
-    private int width;
-    private int height;
-    private int id = 0;
-    private List<ScriptableTilePattern> patterns;
-    private bool[] tilesInversion;
 
-    // and keep only this
     private LevelEditorManager manager;
 
-    Texture2D lockedTex;
+    private Texture2D lockedTex;
     private Event curEvt;
 
     [MenuItem("Custom/Level Editor")]
@@ -48,25 +39,6 @@ public class LevelEditorWindow : EditorWindow
     // called whenever the editor window is created
     public void OnEnable()
     {
-
-        // TODO remove this >>>>>>>>>>>>
-        width = height = LevelInfo.InitDimensions;
-        corners = new Color[4];
-        tiles = new Color[LevelInfo.MaxWidth * LevelInfo.MaxHeight];
-        patterns = new List<ScriptableTilePattern>();
-
-        for (int i = 0; i < 4; ++i)
-        {
-            corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
-        }
-
-        tilesInversion = new bool[LevelInfo.MaxWidth * LevelInfo.MaxHeight];
-        for (int i = 0; i < LevelInfo.MaxWidth * LevelInfo.MaxHeight; ++i)
-        {
-            tilesInversion[i] = false;
-        }
-        // <<<<<<<<<<<<<<<<<<<<<<
-
         manager = new LevelEditorManager();
 
         CreateLockedTileTexture();
@@ -90,47 +62,6 @@ public class LevelEditorWindow : EditorWindow
         DoCanvas();
         GUILayout.EndHorizontal();
     }
-
-
-    // TODO remove this >>>>>>>>>>>>
-    // call for each rbg component and get the final value for the component at pos r, c
-    float GetBarycenter(float c1, float c2, float c3, float c4, int r, int c)
-    {
-        float x1 = c;
-        float x2 = width - c - 1f;
-        float y1 = r;
-        float y2 = height - r - 1f;
-
-        // todo optimize by factorizing
-        float c12 = (x1 * c1 + x2 * c2) / (x1 + x2);
-        float c43 = (x1 * c4 + x2 * c3) / (x1 + x2);
-        float c14 = (y2 * c1 + y1 * c4) / (y1 + y2);
-        float c23 = (y2 * c2 + y1 * c3) / (y1 + y2);
-        float cVertic = (y2 * c12 + y1 * c43) / (y1 + y2);
-        float cHoriz = (x2 * c23 + x1 * c14) / (x1 + x2);
-
-        return (cHoriz + cVertic) / 2;
-    }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-    // TODO remove this >>>>>>>>>>>>
-    private Color ComputeColor(int w, int h)
-    {
-        float red = GetBarycenter(corners[2].r, corners[1].r, corners[0].r, corners[3].r, h, w);
-        float green = GetBarycenter(corners[2].g, corners[1].g, corners[0].g, corners[3].g, h, w);
-        float blue = GetBarycenter(corners[2].b, corners[1].b, corners[0].b, corners[3].b, h, w);
-
-        return new Color(red, green, blue, 1f);
-    }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-    // TODO remove this >>>>>>>>>>>>
-    private int TileIndex(int w, int h)
-    {
-        return (LevelInfo.MaxWidth * h) + w;
-    }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     // create the texture for the border around locked/fixed tiles
     private void CreateLockedTileTexture()
@@ -167,43 +98,6 @@ public class LevelEditorWindow : EditorWindow
         return i;
     }
 
-    // TODO remove this >>>>>>>>>>>>
-    private bool TileIsLocked(int w, int h)
-    {
-        foreach (ScriptableTilePattern pattern in patterns)
-        {
-            foreach (Tuple<int, int> tuple in pattern)
-            {
-                if (tuple.Item1 == h && tuple.Item2 == w)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-    // TODO remove this >>>>>>>>>>>>
-    private void CopyLevelData(ScriptableLevel level)
-    {
-        if (this.id == 0) 
-        {           // default id
-            //string currentDir = Environment.CurrentDirectory;
-            DirectoryInfo directory = new DirectoryInfo("Assets/Levels");
-            this.id = (int) DirCountAssets(directory);      // should not overflow
-        }
-        level.levelId = this.id;
-        level.topLeftColor = this.corners[1];
-        level.topRightColor = this.corners[2];
-        level.bottomLeftColor = this.corners[0];
-        level.bottomRightColor = this.corners[3];
-
-        // fixme shallow copy not working :/
-        level.fixedTiles = this.patterns;
-    }
-    // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     // TODO replace with a JSON serialization of LevelEditorManager
     private void SaveLevel(string path)
@@ -216,8 +110,11 @@ public class LevelEditorWindow : EditorWindow
         //AssetDatabase.Refresh();
 
 
-        string jsonPattern = JsonUtility.ToJson(this.patterns[0]);
-        Debug.Log(jsonPattern);
+        string levelJson = JsonUtility.ToJson(manager);
+        Debug.Log(levelJson);
+
+        string patternJson = JsonUtility.ToJson(manager.patterns[0]);
+        Debug.Log(patternJson);
 
         //Debug.Log("File successfully saved at " + path);
     }
@@ -226,7 +123,7 @@ public class LevelEditorWindow : EditorWindow
     // scriptable tile pattern editor layout
     private void DoPatternAt(int i)
     {
-        ScriptableTilePattern pattern = patterns[i];
+        ScriptableTilePattern pattern = manager.patterns[i];
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Pattern " + (i + 1), EditorStyles.label);
@@ -237,7 +134,7 @@ public class LevelEditorWindow : EditorWindow
                 message: "Remove fixed tiles pattern " + (i + 1) + " ?\nThis action cannot be undone.", 
                 ok: "Yes", cancel: "Noooo !"))
             {
-                patterns.RemoveAt(i);
+                manager.RemovePatternAt(i);
             }
         }
         GUILayout.EndHorizontal();
@@ -247,7 +144,7 @@ public class LevelEditorWindow : EditorWindow
         pattern.SetCoffset(EditorGUILayout.IntField("Left Margin", pattern.leftMargin));
         if (GUILayout.Button("-") && pattern.leftMargin > 0)
             pattern.SetCoffset(pattern.leftMargin - 1);
-        if (GUILayout.Button("+") && pattern.leftMargin < height - 1)
+        if (GUILayout.Button("+") && pattern.leftMargin < manager.Height - 1)
             pattern.SetCoffset(pattern.leftMargin + 1);
         GUILayout.EndHorizontal();
 
@@ -256,7 +153,7 @@ public class LevelEditorWindow : EditorWindow
         pattern.SetRoffset(EditorGUILayout.IntField("Top Margin", pattern.topMargin));
         if (GUILayout.Button("-") && pattern.topMargin > 0)
             pattern.SetRoffset(pattern.topMargin - 1);
-        if (GUILayout.Button("+") && pattern.topMargin < width - 1)
+        if (GUILayout.Button("+") && pattern.topMargin < manager.Width - 1)
             pattern.SetRoffset(pattern.topMargin + 1);
         GUILayout.EndHorizontal();
 
@@ -265,7 +162,7 @@ public class LevelEditorWindow : EditorWindow
         pattern.SetCendoffset(EditorGUILayout.IntField("Right Margin", pattern.rightMargin));
         if (GUILayout.Button("-") && pattern.rightMargin > 0)
             pattern.SetCendoffset(pattern.rightMargin - 1);
-        if (GUILayout.Button("+") && height - pattern.rightMargin > pattern.leftMargin + 1)
+        if (GUILayout.Button("+") && manager.Height - pattern.rightMargin > pattern.leftMargin + 1)
             pattern.SetCendoffset(pattern.rightMargin + 1);
         GUILayout.EndHorizontal();
 
@@ -274,26 +171,26 @@ public class LevelEditorWindow : EditorWindow
         pattern.SetRendoffset(EditorGUILayout.IntField("Bottom Margin", pattern.bottomMargin));
         if (GUILayout.Button("-") && pattern.bottomMargin > 0)
             pattern.SetRendoffset(pattern.bottomMargin - 1);
-        if (GUILayout.Button("+") && width - pattern.bottomMargin > pattern.topMargin + 1)
+        if (GUILayout.Button("+") && manager.Width - pattern.bottomMargin > pattern.topMargin + 1)
             pattern.SetRendoffset(pattern.bottomMargin + 1);
         GUILayout.EndHorizontal();
 
-        // spacing
+        // verticalStep
         GUILayout.BeginHorizontal();
-        pattern.SetSpacing(EditorGUILayout.IntField("Vert. Step", pattern.spacing));
-        if (GUILayout.Button("-") && pattern.spacing > -1)
-            pattern.SetSpacing(pattern.spacing - 1);
+        pattern.SetSpacing(EditorGUILayout.IntField("Vert. Step", pattern.verticalStep));
+        if (GUILayout.Button("-") && pattern.verticalStep > -1)
+            pattern.SetSpacing(pattern.verticalStep - 1);
         if (GUILayout.Button("+"))
-            pattern.SetSpacing(pattern.spacing + 1);
+            pattern.SetSpacing(pattern.verticalStep + 1);
         GUILayout.EndHorizontal();
 
-        // repeat
+        // horizontalStep
         GUILayout.BeginHorizontal();
-        pattern.SetRepeat(EditorGUILayout.IntField("Horiz. Step", pattern.repeat));
-        if (GUILayout.Button("-") && pattern.repeat > -1)
-            pattern.SetRepeat(pattern.repeat - 1);
+        pattern.SetRepeat(EditorGUILayout.IntField("Horiz. Step", pattern.horizontalStep));
+        if (GUILayout.Button("-") && pattern.horizontalStep > -1)
+            pattern.SetRepeat(pattern.horizontalStep - 1);
         if (GUILayout.Button("+"))
-            pattern.SetRepeat(pattern.repeat + 1);
+            pattern.SetRepeat(pattern.horizontalStep + 1);
         GUILayout.EndHorizontal();
 
     }
@@ -303,14 +200,22 @@ public class LevelEditorWindow : EditorWindow
         Color oldColor = GUI.color;
         GUILayout.BeginVertical();
 
-        for (int h = 0; h < height; ++h)
+        int currentTileIndex;
+        Color tileColor;
+
+        for (int h = 0; h < manager.Height; ++h)
         {
             GUILayout.BeginHorizontal();
 
-            for (int w = 0; w < width; ++w)
+            for (int w = 0; w < manager.Width; ++w)
             {
-                tiles[TileIndex(w, h)] = ComputeColor(w, h);
-                GUI.color = tiles[TileIndex(w, h)];
+                currentTileIndex = manager.TileIndex(w, h);
+                tileColor = manager.tiles[currentTileIndex];
+
+                if (manager.tilesInversion[currentTileIndex]) {
+                    tileColor = tileColor.Invert();
+                }
+                GUI.color = tileColor;
 
                 Texture2D tex = EditorGUIUtility.whiteTexture;
 
@@ -322,7 +227,7 @@ public class LevelEditorWindow : EditorWindow
                 // then use it
                 GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
                 // draw borders around the tile if it is locked
-                if (TileIsLocked(w, h))
+                if (manager.TileIsLocked(w, h))
                 {
                     GUI.DrawTexture(rect, tex, ScaleMode.StretchToFill, alphaBlend: true, imageAspect: 0, color: new Color(0f, 0f, 0f, 1f), 5f, 0f);
                 }
@@ -350,43 +255,35 @@ public class LevelEditorWindow : EditorWindow
 
         // width
         GUILayout.BeginHorizontal();
-        width = EditorGUILayout.IntField("Width", width);
-        if (GUILayout.Button("-") && width > 1)
-            width -= 1;
-        if (GUILayout.Button("+") && width < LevelInfo.MaxWidth)
-            width += 1;
+        // TODO: check wether this first binding is useful or not
+        manager.Width = EditorGUILayout.IntField("Width", manager.Width);
+
+        if (GUILayout.Button("-"))
+            manager.Width -= 1;
+        if (GUILayout.Button("+"))
+            manager.Width += 1;
         GUILayout.EndHorizontal();
 
         // height
         GUILayout.BeginHorizontal();
-        height = EditorGUILayout.IntField("Height", height);
-        if (GUILayout.Button("-") && height > 1)
+        manager.Height = EditorGUILayout.IntField("Height", manager.Height);
+        if (GUILayout.Button("-"))
         {
-            height -= 1;
-            foreach (ScriptableTilePattern pattern in patterns)
+            manager.Height -= 1;
+            foreach (ScriptableTilePattern pattern in manager.patterns)
             {
-                pattern.SetHeight(height);
+                pattern.SetHeight(manager.Height);
             }
         }
-        if (GUILayout.Button("+") && width < LevelInfo.MaxHeight)
+        if (GUILayout.Button("+"))
         {
-            height += 1;
-            foreach (ScriptableTilePattern pattern in patterns)
+            manager.Height += 1;
+            foreach (ScriptableTilePattern pattern in manager.patterns)
             {
-                pattern.SetHeight(height);
+                pattern.SetHeight(manager.Height);
             }
         }
         GUILayout.EndHorizontal();
-
-        // check for bounds
-        if (width < 0)
-            width = 0;
-        if (width > LevelInfo.MaxWidth)
-            width = LevelInfo.MaxWidth;
-        if (height < 0)
-            height = 0;
-        if (height > LevelInfo.MaxHeight)
-            height = LevelInfo.MaxHeight;
 
         // horizontal line separator
         EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -396,22 +293,19 @@ public class LevelEditorWindow : EditorWindow
 
         // colors of the corners
         GUILayout.BeginHorizontal();
-        corners[1] = EditorGUILayout.ColorField(corners[1], GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
-        corners[2] = EditorGUILayout.ColorField(corners[2], GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
+        manager.TopLeft = EditorGUILayout.ColorField(manager.TopLeft, GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
+        manager.TopRight = EditorGUILayout.ColorField(manager.TopRight, GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
-        corners[0] = EditorGUILayout.ColorField(corners[0], GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
-        corners[3] = EditorGUILayout.ColorField(corners[3], GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
+        manager.BottomLeft = EditorGUILayout.ColorField(manager.BottomLeft, GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
+        manager.BottomRight = EditorGUILayout.ColorField(manager.BottomRight, GUILayout.MaxWidth(LevelInfo.MaxSidePanelWidth));
         GUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
 
         // randomize colors button
         if (GUILayout.Button("Randomize Colors")) {
-            for (int i = 0; i < 4; ++i)
-            {
-                corners[i] = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
-            }
+            manager.RandomizeColors();
         }
 
         // horizontal line separator
@@ -423,7 +317,7 @@ public class LevelEditorWindow : EditorWindow
         EditorGUILayout.Space();
 
         // render each pattern
-        for (int i = 0; i < patterns.Count; ++i)
+        for (int i = 0; i < manager.patterns.Count; ++i)
         {
             DoPatternAt(i);
         }
@@ -431,15 +325,15 @@ public class LevelEditorWindow : EditorWindow
         // add new pattern
         if (GUILayout.Button("(+) New Pattern"))
         {
-            patterns.Add(ScriptableObject.CreateInstance<ScriptableTilePattern>());
-            patterns[patterns.Count - 1].SetHeight(height);
-            patterns[patterns.Count - 1].SetWidth(width);
+            manager.patterns.Add(ScriptableObject.CreateInstance<ScriptableTilePattern>());
+            manager.patterns[manager.patterns.Count - 1].SetHeight(manager.Height);
+            manager.patterns[manager.patterns.Count - 1].SetWidth(manager.Width);
         }
 
         // save button
         if (GUILayout.Button("Save as..."))
         {
-            string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.asset", "asset");
+            string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.json", "json");
 
             if (path.Length !=0)
             {
@@ -452,31 +346,6 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.EndVertical();
     }
 
-    /*
-    // event handler from https://answers.unity.com/questions/62859/left-click-up-event-in-editor.html
-    void checkForRelease()
-    {
-        Event e = Event.current;
-        int controlID = GUIUtility.GetControlID(FocusType.Passive);
-        switch (e.GetTypeForControl(controlID))
-        {
-            case EventType.MouseDown:
-                GUIUtility.hotControl = controlID;
-                e.Use();
-                break;
-            case EventType.MouseUp:
-                GUIUtility.hotControl = 0;
-                e.Use();
-                Debug.Log("up !");
-                break;
-            case EventType.MouseDrag:
-                GUIUtility.hotControl = controlID;
-                e.Use();
-                break;
-        }
-    }
-    */
-
     void HandleMouseUp(Event evt)
     {
         // always 300
@@ -484,9 +353,13 @@ public class LevelEditorWindow : EditorWindow
         // Debug.Log("Handling mouse up on editor window at position " + evt.mousePosition.x + ", " + evt.mousePosition.y);
         // Debug.Log("Window width: " + position.width + ", height: " + position.height);
 
-        // TODO: fix the x that gets rounded to 0 when when -1 < x < 0 and round it to -1 instead
-        int x = (int) ( ((int)evt.mousePosition.x - LevelInfo.MaxGridPanelWidth) * width / (position.width - LevelInfo.MaxGridPanelWidth) );
-        int y = (int) ( (int)evt.mousePosition.y * height / position.height);
-        Debug.Log("Click at " + x + ", " + y);
+        float xf = ((int)evt.mousePosition.x - LevelInfo.MaxGridPanelWidth) * manager.Width / (position.width - LevelInfo.MaxGridPanelWidth);
+        int x = (xf > 0? (int)xf : -1);
+        int y = (int) ( (int)evt.mousePosition.y * manager.Height / position.height);
+
+        if (x >= 0 && y >= 0) {
+            manager.InvertTilesAround(x, y);
+            this.Repaint();
+        }
     }
 }
