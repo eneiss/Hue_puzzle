@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 // TODO: check if colors are correctly computed when the size of the grid changes
@@ -33,6 +35,8 @@ public class LevelEditorManager
     [SerializeField]
     private int height;
 
+    private int currentLevelId;
+
     private List<(int dx, int dy)> neighbours = new List<(int dx, int dy)>
         {
             (-1, -1), (-1, 1), (1, -1), (1, 1),
@@ -54,7 +58,6 @@ public class LevelEditorManager
             ComputeTileColors();
         }
     }
-
     public Color TopLeft
     {
         get { return this.corners[1]; }
@@ -128,6 +131,11 @@ public class LevelEditorManager
         {
             tilesInversion[i] = false;
         }
+
+        // determine level id
+        string levelsDirPath = Application.dataPath + "/Levels";
+        DirectoryInfo levelsDirInfo = new DirectoryInfo(levelsDirPath);
+        currentLevelId = (int) levelsDirInfo.CountFilesOfType("asset");
     }
 
     public void RemovePatternAt(int i)
@@ -160,7 +168,6 @@ public class LevelEditorManager
     public void InvertTilesAround(int w, int h)
     {
         int index;
-        // TODO OOB check
         if (!TileIsLocked(w, h))
         {
             //Debug.Log("Inverting around " + w + ", " + h);
@@ -211,7 +218,6 @@ public class LevelEditorManager
         return (LevelInfo.MaxWidth * h) + w;
     }
 
-
     // call for each rbg component and get the final value for the component at pos r, c
     private float GetBarycenter(float width, float height, float c1, float c2, float c3, float c4, int r, int c)
     {
@@ -234,6 +240,35 @@ public class LevelEditorManager
     private Color RandomColor()
     {
         return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
+    }
+
+    public void SaveLevel(string path) {
+
+        path = path.Replace(Application.dataPath, "Assets");        // use the relative path?
+
+        ScriptableLevel level = ScriptableObject.CreateInstance<ScriptableLevel>();
+        AssetDatabase.CreateAsset(level, path);
+
+        level.levelId = this.currentLevelId;
+        level.topLeftColor = this.corners[1];
+        level.topRightColor = this.corners[2];
+        level.bottomLeftColor = this.corners[0];
+        level.bottomRightColor = this.corners[3];
+
+        level.fixedTiles = new List<ScriptableTilePattern>();
+        int patternNumber = 0;
+        foreach (ScriptableTilePattern pattern in this.patterns) {
+            pattern.name = "Pattern " + patternNumber;
+            level.fixedTiles.Add(pattern);
+            AssetDatabase.AddObjectToAsset(pattern, path);
+            patternNumber++;
+        }
+
+        // save
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        this.currentLevelId++;
     }
 
 }

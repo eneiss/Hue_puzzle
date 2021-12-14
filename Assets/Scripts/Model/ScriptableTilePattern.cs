@@ -18,7 +18,6 @@ public class ScriptableTilePattern : ScriptableObject
 
     public List<Vector2> vector2s = new List<Vector2> { new Vector2(x: 3f, y: 42f) };
 
-    // note to self: only public or [SerializeField] attributes can be serialized
     [SerializeField]
     private Color color = new Color(0.5f, 0f, 0.5f);
 
@@ -97,7 +96,7 @@ public class ScriptableTilePattern : ScriptableObject
         this.verticalStep = source.spacing;
         this.horizontalStep = source.repeat;
 
-        // dont copy tiles since they were not computed yet
+        // don't copy tiles since they were not computed yet
     }
 
 

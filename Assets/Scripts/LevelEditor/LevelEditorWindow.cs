@@ -28,7 +28,7 @@ public class LevelEditorWindow : EditorWindow
     private Texture2D lockedTex;
     private Event curEvt;
 
-    [MenuItem("Custom/Level Editor")]
+    [MenuItem("Level Editor/Editor")]
     public static void ShowLevelEditorWindow()
     {
         // find window if existing, else create it
@@ -84,37 +84,20 @@ public class LevelEditorWindow : EditorWindow
         }
     }
 
-    private static long DirCountAssets(DirectoryInfo d)
-    {
-        Debug.Log(d.FullName);
-        long i = 0;
-        // Add file sizes.
-        FileInfo[] fis = d.GetFiles();
-        foreach (FileInfo fi in fis)
-        {
-            if (fi.Extension.Equals(".asset", StringComparison.OrdinalIgnoreCase))
-                i++;
-        }
-        return i;
-    }
 
-
-    // TODO replace with a JSON serialization of LevelEditorManager
+    // TODO replace with a JSON serialization of LevelEditorManager -> or not
+    // or remove this and do the logic in the manager only
     private void SaveLevel(string path)
     {
-        //path = path.Replace(Application.dataPath, "Assets");
-        //ScriptableLevel scriptableLevel = ScriptableObject.CreateInstance<ScriptableLevel>();
-        //Debug.Log(scriptableLevel.levelId);
-        //CopyLevelData(scriptableLevel);
-        //AssetDatabase.CreateAsset(scriptableLevel, path);
-        //AssetDatabase.Refresh();
+
+        manager.SaveLevel(path);
 
 
-        string levelJson = JsonUtility.ToJson(manager);
-        Debug.Log(levelJson);
+        //string levelJson = JsonUtility.ToJson(manager);
+        //Debug.Log(levelJson);
 
-        string patternJson = JsonUtility.ToJson(manager.patterns[0]);
-        Debug.Log(patternJson);
+        //string patternJson = JsonUtility.ToJson(manager.patterns[0]);
+        //Debug.Log(patternJson);
 
         //Debug.Log("File successfully saved at " + path);
     }
@@ -333,7 +316,8 @@ public class LevelEditorWindow : EditorWindow
         // save button
         if (GUILayout.Button("Save as..."))
         {
-            string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.json", "json");
+            //string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.json", "json");
+            string path = EditorUtility.SaveFilePanel("Save level as", "Assets/Levels", "level.asset", "asset");
 
             if (path.Length !=0)
             {
