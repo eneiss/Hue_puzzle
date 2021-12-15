@@ -1,7 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-// using System.Diagnostics;
+﻿using System.Collections.Generic;
 using UnityEngine;
+
+/*
+    ===== TODO DELETE =====
+    (Test file)
+ */
 
 public class LevelGameManager : MonoBehaviour
 {
