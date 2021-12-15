@@ -15,6 +15,7 @@ public class ScriptableTilePattern : ScriptableObject {
     public List<Vector2Int> tiles;
 
     // compute the coordinates of each fixed tile in the pattern
+    [ContextMenu("Compute Tile Coords")]
     void ComputeTileCoords() {
         tiles = new List<Vector2Int>();
 
