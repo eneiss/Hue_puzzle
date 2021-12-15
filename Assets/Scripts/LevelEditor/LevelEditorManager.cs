@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 // TODO: check if colors are correctly computed when the size of the grid changes
 
-public class LevelInfo
-{
+public class LevelInfo {
     public const int MaxHeight = 20;
     public const int MaxWidth = 20;
     public const int MaxSidePanelWidth = 100;
@@ -17,8 +17,7 @@ public class LevelInfo
 }
 
 [System.Serializable]
-public class LevelEditorManager
-{
+public class LevelEditorManager {
     // public
     [NonSerialized]
     public Color[] tiles;       // TODO: use computed/observable properties ?
@@ -26,6 +25,7 @@ public class LevelEditorManager
     [SerializeField]
     public List<ScriptableTilePattern> patterns;
     public bool[] tilesInversion;
+    public List<Vector2Int> moves;
 
     // private
     [SerializeField]
@@ -50,42 +50,37 @@ public class LevelEditorManager
         level.bottomLeftColor = this.corners[0];
         level.bottomRightColor = this.corners[3];
      */
-    public Color BottomLeft
-    {
+    public Color BottomLeft {
         get { return this.corners[0]; }
         set {
             this.corners[0] = value;
             ComputeTileColors();
         }
     }
-    public Color TopLeft
-    {
+    public Color TopLeft {
         get { return this.corners[1]; }
-        set { 
+        set {
             this.corners[1] = value;
             ComputeTileColors();
         }
     }
-    public Color TopRight
-    {
+    public Color TopRight {
         get { return this.corners[2]; }
-        set { 
+        set {
             this.corners[2] = value;
             ComputeTileColors();
         }
     }
-    public Color BottomRight
-    {
+    public Color BottomRight {
         get { return this.corners[3]; }
-        set { 
+        set {
             this.corners[3] = value;
             ComputeTileColors();
         }
     }
 
     // public computed width & height (check for bounds)
-    public int Width
-    {
+    public int Width {
         get { return this.width; }
         set {
             if (value < 1)
@@ -97,11 +92,9 @@ public class LevelEditorManager
         }
     }
 
-    public int Height
-    {
+    public int Height {
         get { return this.height; }
-        set
-        {
+        set {
             if (value < 1)
                 this.height = 1;
             else if (value > LevelInfo.MaxHeight)
@@ -112,14 +105,12 @@ public class LevelEditorManager
     }
 
     // -------------- methods
-    public LevelEditorManager()
-    {
+    public LevelEditorManager() {
         this.InitValues();
         this.RandomizeColors();
     }
 
-    private void InitValues()
-    {
+    private void InitValues() {
 
         width = height = LevelInfo.InitDimensions;
         corners = new Color[4];
@@ -127,26 +118,24 @@ public class LevelEditorManager
         patterns = new List<ScriptableTilePattern>();
 
         tilesInversion = new bool[LevelInfo.MaxWidth * LevelInfo.MaxHeight];
-        for (int i = 0; i < LevelInfo.MaxWidth * LevelInfo.MaxHeight; ++i)
-        {
+        for (int i = 0; i < LevelInfo.MaxWidth * LevelInfo.MaxHeight; ++i) {
             tilesInversion[i] = false;
         }
 
         // determine level id
         string levelsDirPath = Application.dataPath + "/Levels";
         DirectoryInfo levelsDirInfo = new DirectoryInfo(levelsDirPath);
-        currentLevelId = (int) levelsDirInfo.CountFilesOfType("asset");
+        currentLevelId = (int)levelsDirInfo.CountFilesOfType("asset");
+
+        moves = new List<Vector2Int>();
     }
 
-    public void RemovePatternAt(int i)
-    {
+    public void RemovePatternAt(int i) {
         this.patterns.RemoveAt(i);
     }
 
-    public void RandomizeColors()
-    {
-        for (int i = 0; i < 4; ++i)
-        {
+    public void RandomizeColors() {
+        for (int i = 0; i < 4; ++i) {
             corners[i] = this.RandomColor();
         }
 
@@ -154,39 +143,35 @@ public class LevelEditorManager
     }
 
     // call this whenever the size, color or inversion of the board has changed
-    public void ComputeTileColors()
-    {
-        for (int h = 0; h < height; ++h)
-        {
-            for (int w = 0; w < width; ++w)
-            {
+    public void ComputeTileColors() {
+        for (int h = 0; h < height; ++h) {
+            for (int w = 0; w < width; ++w) {
                 tiles[TileIndex(w, h)] = ComputeColor(w, h);
             }
         }
     }
 
-    public void InvertTilesAround(int w, int h)
-    {
+    public void InvertTilesAround(int w, int h) {
         int index;
-        if (!TileIsLocked(w, h))
-        {
-            //Debug.Log("Inverting around " + w + ", " + h);
+        if (!TileIsLocked(w, h)) {
             foreach ((int dw, int dh) in neighbours) {
                 index = TileIndex(w + dw, h + dh);
                 if (!TileIsLocked(w + dw, h + dh) && index >= 0) {      // index = -1 <=> OOB
-                    //Debug.Log("Inverting tile " + (w + dw) + ", " + (h + dh));
                     tilesInversion[index] = !tilesInversion[index];
                 };
             }
 
             tilesInversion[TileIndex(w, h)] = !tilesInversion[TileIndex(w, h)];
-        } else {
+
+            moves.Add(new Vector2Int(w, h));
+
+        }
+        else {
             Debug.Log("Cant invert locked tile");
         }
     }
 
-    private Color ComputeColor(int w, int h)
-    {
+    private Color ComputeColor(int w, int h) {
         float red = GetBarycenter(width, height, corners[2].r, corners[1].r, corners[0].r, corners[3].r, h, w);
         float green = GetBarycenter(width, height, corners[2].g, corners[1].g, corners[0].g, corners[3].g, h, w);
         float blue = GetBarycenter(width, height, corners[2].b, corners[1].b, corners[0].b, corners[3].b, h, w);
@@ -194,14 +179,10 @@ public class LevelEditorManager
         return new Color(red, green, blue, 1f);
     }
 
-    public bool TileIsLocked(int w, int h)
-    {
-        foreach (ScriptableTilePattern pattern in patterns)
-        {
-            foreach (Tuple<int, int> tuple in pattern)
-            {
-                if (tuple.Item1 == h && tuple.Item2 == w)
-                {
+    public bool TileIsLocked(int w, int h) {
+        foreach (ScriptableTilePattern pattern in patterns) {
+            foreach (Tuple<int, int> tuple in pattern) {
+                if (tuple.Item1 == h && tuple.Item2 == w) {
                     return true;
                 }
             }
@@ -211,16 +192,14 @@ public class LevelEditorManager
     }
 
     // OOB check : -1 if OOB
-    public int TileIndex(int w, int h)
-    {
+    public int TileIndex(int w, int h) {
         if (w < 0 || w >= width || h < 0 || h >= height)
             return -1;
         return (LevelInfo.MaxWidth * h) + w;
     }
 
     // call for each rbg component and get the final value for the component at pos r, c
-    private float GetBarycenter(float width, float height, float c1, float c2, float c3, float c4, int r, int c)
-    {
+    private float GetBarycenter(float width, float height, float c1, float c2, float c3, float c4, int r, int c) {
         float x1 = c;
         float x2 = width - c - 1f;
         float y1 = r;
@@ -237,8 +216,7 @@ public class LevelEditorManager
         return (cHoriz + cVertic) / 2;
     }
 
-    private Color RandomColor()
-    {
+    private Color RandomColor() {
         return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value, 1f);
     }
 
@@ -255,6 +233,7 @@ public class LevelEditorManager
         level.bottomLeftColor = this.corners[0];
         level.bottomRightColor = this.corners[3];
 
+        // fixed patterns
         level.fixedTiles = new List<ScriptableTilePattern>();
         int patternNumber = 0;
         foreach (ScriptableTilePattern pattern in this.patterns) {
@@ -262,6 +241,16 @@ public class LevelEditorManager
             level.fixedTiles.Add(pattern);
             AssetDatabase.AddObjectToAsset(pattern, path);
             patternNumber++;
+        }
+
+        // moves
+        level.moves = new List<Vector2Int>();
+        // only add the necessary number of the same move
+        var groupedMoves = this.moves.GroupBy(i => i);
+        foreach (var group in groupedMoves) {
+            if (group.Count() % 2 == 1) {
+                level.moves.Add(group.Key);
+            }
         }
 
         // save

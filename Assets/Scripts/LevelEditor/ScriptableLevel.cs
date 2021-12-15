@@ -4,8 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu]
-public class ScriptableLevel : ScriptableObject
-{
+public class ScriptableLevel : ScriptableObject {
 
     public int levelId;
     public int nbRows;
@@ -14,21 +13,18 @@ public class ScriptableLevel : ScriptableObject
     public Color topRightColor;
     public Color bottomLeftColor;
     public Color bottomRightColor;
-    public List<Tuple<int, int>> moves;
+    public List<Vector2Int> moves;
     public List<ScriptableTilePattern> fixedTiles;
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         Debug.Log("ScriptableLevel loaded");
     }
 
-    private void OnDisable()
-    {
+    private void OnDisable() {
         Debug.Log("ScriptableLevel disabled");
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         Debug.Log("ScriptableLevel destroyed");
     }
 
