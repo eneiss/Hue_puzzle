@@ -7,11 +7,11 @@ public class LevelManager : MonoBehaviour {
     public GameObject grid;
     public GameObject tilePrefab;
     public GameObject endCanvas;
+    public double screenOccupation = 0.95;
 
     GameObject[] tiles;
     List<(int dx, int dy)> neighbours;
-    LevelData levelData;
-    readonly double screenOccupation = 0.95;
+    public ScriptableLevel levelData;
     bool cleared = false;
 
     void Start() {
@@ -23,8 +23,11 @@ public class LevelManager : MonoBehaviour {
             (0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)
         };
 
-        levelData = (LevelData)GameObject.FindWithTag("LevelData").GetComponent(typeof(LevelData));
-        //Debug.Log(levelData.nbRows);
+        if (ApplicationModel.scriptableLevel != null) {
+            levelData = ApplicationModel.scriptableLevel;
+        }
+
+        Debug.Log("Loaded level nb rows: " + levelData.nbRows);
 
         GenerateInitialGrid();
 
@@ -106,9 +109,9 @@ public class LevelManager : MonoBehaviour {
     }
 
     void SetFixedTiles() {
-        foreach (FixedTilePattern pattern in levelData.fixedTiles) {
-            foreach (Tuple<int, int> coords in pattern) {
-                GameObject tile = GetTile(coords.Item1, coords.Item2);
+        foreach (ScriptableTilePattern pattern in levelData.fixedTiles) {
+            foreach (Vector2Int coords in pattern) {
+                GameObject tile = GetTile(coords.x, coords.y);
                 TileScript tileScript = (TileScript)tile.GetComponent(typeof(TileScript));
                 tileScript.SetFixed(true);
             }
@@ -155,20 +158,16 @@ public class LevelManager : MonoBehaviour {
 
     void ApplyMoves() {
         // TODO apply the moves of the level data to the grid
-        foreach (string move in levelData.moves) {
-            string[] splitString = move.Split(' ');
-            int r = Int16.Parse(splitString[0]);
-            int c = Int16.Parse(splitString[1]);
-            //Debug.Log("Move : " + r + ", " + c);
+        foreach (Vector2Int move in levelData.moves) {
 
-            TileScript ts = (TileScript)GetTile(r, c).GetComponent<TileScript>();
+            TileScript ts = (TileScript)GetTile(move.x, move.y).GetComponent<TileScript>();
 
             if (ts.GetFixed()) {
                 Debug.LogError("WARNING: trying to apply a move on a fixed tile !");
             }
             else {
-                InvertTiles(r, c);      // fixme c, r and not r, c ?
-                Debug.Log("Applying move at " + r + ", " + c);
+                InvertTiles(move.x, move.y);
+                Debug.Log("Applying move at " + move.x + ", " + move.y);
             }
         }
     }
@@ -220,7 +219,6 @@ public class LevelManager : MonoBehaviour {
 
     public void Back() {
         Debug.Log("Back");
-        Destroy(levelData.gameObject);
         SceneManager.LoadScene("LevelSelection");
     }
 

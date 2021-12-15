@@ -15,17 +15,4 @@ public class ScriptableLevel : ScriptableObject {
     public Color bottomRightColor;
     public List<Vector2Int> moves;
     public List<ScriptableTilePattern> fixedTiles;
-
-    private void OnEnable() {
-        Debug.Log("ScriptableLevel loaded");
-    }
-
-    private void OnDisable() {
-        Debug.Log("ScriptableLevel disabled");
-    }
-
-    private void OnDestroy() {
-        Debug.Log("ScriptableLevel destroyed");
-    }
-
 }

@@ -789,6 +789,8 @@ MonoBehaviour:
   grid: {fileID: 2016534416}
   tilePrefab: {fileID: 8009566506378649522, guid: 0750ff076685b5646ab03a65581e17ea, type: 3}
   endCanvas: {fileID: 760690058}
+  screenOccupation: 0.95
+  levelData: {fileID: 11400000, guid: 157f80f6a5445a64385ae32d00b0d7a2, type: 2}
 --- !u!1 &1726142799
 GameObject:
   m_ObjectHideFlags: 0

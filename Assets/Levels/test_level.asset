@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2f42768bdb16584095dbde14e38cfb5, type: 3}
+  m_Name: test_level
+  m_EditorClassIdentifier: 
+  levelId: 2
+  nbRows: 5
+  nbColumns: 5
+  topLeftColor: {r: 0.9265963, g: 0.82306635, b: 0.3303248, a: 1}
+  topRightColor: {r: 0.80270314, g: 0.9935546, b: 0.9312347, a: 1}
+  bottomLeftColor: {r: 0.43977123, g: 0.73011976, b: 0.36815718, a: 1}
+  bottomRightColor: {r: 0.1226417, g: 0.9286356, b: 0.884446, a: 1}
+  moves: []
+  fixedTiles:
+  - {fileID: 8332076702910910001}
+--- !u!114 &8332076702910910001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5bcc1bc34ff3a5428c1346a8b10e0f0, type: 3}
+  m_Name: Pattern 0
+  m_EditorClassIdentifier: 
+  topMargin: 1
+  leftMargin: 1
+  bottomMargin: 1
+  rightMargin: 1
+  verticalStep: 1
+  horizontalStep: 1
+  width: 7
+  height: 7
+  tiles:
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 1, y: 3}
+  - {x: 1, y: 4}
+  - {x: 1, y: 5}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}
+  - {x: 2, y: 3}
+  - {x: 2, y: 4}
+  - {x: 2, y: 5}
+  - {x: 3, y: 1}
+  - {x: 3, y: 2}
+  - {x: 3, y: 3}
+  - {x: 3, y: 4}
+  - {x: 3, y: 5}
+  - {x: 4, y: 1}
+  - {x: 4, y: 2}
+  - {x: 4, y: 3}
+  - {x: 4, y: 4}
+  - {x: 4, y: 5}
+  - {x: 5, y: 1}
+  - {x: 5, y: 2}
+  - {x: 5, y: 3}
+  - {x: 5, y: 4}
+  - {x: 5, y: 5}

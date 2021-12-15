@@ -179,10 +179,11 @@ public class LevelEditorManager {
         return new Color(red, green, blue, 1f);
     }
 
+    // TODO: optimize somehow?
     public bool TileIsLocked(int w, int h) {
         foreach (ScriptableTilePattern pattern in patterns) {
-            foreach (Tuple<int, int> tuple in pattern) {
-                if (tuple.Item1 == h && tuple.Item2 == w) {
+            foreach (Vector2Int tile in pattern) {
+                if (tile.x == h && tile.y == w) {
                     return true;
                 }
             }

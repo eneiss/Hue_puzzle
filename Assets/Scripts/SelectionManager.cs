@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectionManager : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class SelectionManager : MonoBehaviour {
+    void Start() {
+        ApplicationModel.levelFileNames.Add("test_level");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    // TODO somewhere: write ApplicationModel.levelToLoad (or have the buttons do it)
+    void Update() {
+
     }
 }
