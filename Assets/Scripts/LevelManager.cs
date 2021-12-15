@@ -160,7 +160,6 @@ public class LevelManager : MonoBehaviour {
     }
 
     void ApplyMoves() {
-        // TODO apply the moves of the level data to the grid
         foreach (Vector2Int move in levelData.moves) {
 
             TileScript ts = (TileScript)GetTile(move.x, move.y).GetComponent<TileScript>();
@@ -169,7 +168,7 @@ public class LevelManager : MonoBehaviour {
                 Debug.LogError("WARNING: trying to apply a move on a fixed tile !");
             }
             else {
-                InvertTiles(move.x, move.y);
+                InvertTiles(move.x, levelData.nbRows - move.y - 1);
                 Debug.Log("Applying move at " + move.x + ", " + move.y);
             }
         }
