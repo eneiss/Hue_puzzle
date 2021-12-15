@@ -19,7 +19,11 @@ MonoBehaviour:
   topRightColor: {r: 0.80270314, g: 0.9935546, b: 0.9312347, a: 1}
   bottomLeftColor: {r: 0.43977123, g: 0.73011976, b: 0.36815718, a: 1}
   bottomRightColor: {r: 0.1226417, g: 0.9286356, b: 0.884446, a: 1}
-  moves: []
+  moves:
+  - {x: 0, y: 0}
+  - {x: 4, y: 0}
+  - {x: 0, y: 4}
+  - {x: 4, y: 4}
   fixedTiles:
   - {fileID: 8332076702910910001}
 --- !u!114 &8332076702910910001
@@ -40,31 +44,15 @@ MonoBehaviour:
   rightMargin: 1
   verticalStep: 1
   horizontalStep: 1
-  width: 7
-  height: 7
+  width: 5
+  height: 5
   tiles:
   - {x: 1, y: 1}
   - {x: 1, y: 2}
   - {x: 1, y: 3}
-  - {x: 1, y: 4}
-  - {x: 1, y: 5}
   - {x: 2, y: 1}
   - {x: 2, y: 2}
   - {x: 2, y: 3}
-  - {x: 2, y: 4}
-  - {x: 2, y: 5}
   - {x: 3, y: 1}
   - {x: 3, y: 2}
   - {x: 3, y: 3}
-  - {x: 3, y: 4}
-  - {x: 3, y: 5}
-  - {x: 4, y: 1}
-  - {x: 4, y: 2}
-  - {x: 4, y: 3}
-  - {x: 4, y: 4}
-  - {x: 4, y: 5}
-  - {x: 5, y: 1}
-  - {x: 5, y: 2}
-  - {x: 5, y: 3}
-  - {x: 5, y: 4}
-  - {x: 5, y: 5}

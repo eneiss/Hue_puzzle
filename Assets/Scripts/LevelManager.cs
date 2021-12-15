@@ -112,6 +112,9 @@ public class LevelManager : MonoBehaviour {
         foreach (ScriptableTilePattern pattern in levelData.fixedTiles) {
             foreach (Vector2Int coords in pattern) {
                 GameObject tile = GetTile(coords.x, coords.y);
+                if (tile == null) {
+                    Debug.LogWarning("Null tile at " + coords.x + ", " + coords.y);
+                }
                 TileScript tileScript = (TileScript)tile.GetComponent(typeof(TileScript));
                 tileScript.SetFixed(true);
             }

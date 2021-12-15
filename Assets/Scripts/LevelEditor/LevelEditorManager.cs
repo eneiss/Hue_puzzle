@@ -239,6 +239,8 @@ public class LevelEditorManager {
         int patternNumber = 0;
         foreach (ScriptableTilePattern pattern in this.patterns) {
             pattern.name = "Pattern " + patternNumber;
+            pattern.width = this.width;     // in case this changed
+            pattern.height = this.height;
             level.fixedTiles.Add(pattern);
             AssetDatabase.AddObjectToAsset(pattern, path);
             patternNumber++;
