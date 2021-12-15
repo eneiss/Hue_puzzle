@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: level with green
   m_EditorClassIdentifier: 
   levelId: 42
-  nbRows: 0
-  nbColumns: 0
+  nbRows: 6
+  nbColumns: 6
   topLeftColor: {r: 0.7175372, g: 0.79770124, b: 0.6326193, a: 1}
   topRightColor: {r: 0.32185188, g: 0.9255923, b: 0.36177555, a: 1}
   bottomLeftColor: {r: 0.85119355, g: 0.8786273, b: 0.50225276, a: 1}
   bottomRightColor: {r: 0.14442517, g: 0.38202852, b: 0.35054377, a: 1}
+  moves:
+  - {x: 3, y: 4}
+  - {x: 4, y: 5}
+  fixedTiles: []

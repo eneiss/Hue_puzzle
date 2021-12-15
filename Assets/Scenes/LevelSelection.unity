@@ -305,6 +305,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b3e70a4cbd0a944966b200a5764599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levels:
+  - {fileID: 11400000, guid: 9822449826ca6db46b9f1888f47c3242, type: 2}
+  - {fileID: 11400000, guid: d73d6eb61d92f98438fa65727e94a7c9, type: 2}
+  - {fileID: 11400000, guid: 157f80f6a5445a64385ae32d00b0d7a2, type: 2}
 --- !u!1001 &363341829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -484,6 +488,10 @@ PrefabInstance:
       propertyPath: nbRows
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 9047477930630689401, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: levelNo
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689403, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: m_Color.r
       value: 0.39215684
@@ -656,7 +664,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 900, y: 1600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -672,8 +680,8 @@ Canvas:
   m_GameObject: {fileID: 1025092864}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 163848795}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -764,7 +772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689397, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -12.116
+      value: -12.115997
       objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689397, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: m_SizeDelta.x
@@ -830,6 +838,10 @@ PrefabInstance:
       propertyPath: fixedTiles.Array.data[1]
       value: 
       objectReference: {fileID: 1147268562}
+    - target: {fileID: 9047477930630689401, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: levelNo
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 9047477931443811781, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: m_Text
       value: Level 2
@@ -1152,6 +1164,10 @@ PrefabInstance:
     - target: {fileID: 9047477930630689400, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: moves.Array.data[0]
       value: 2 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9047477930630689401, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
+      propertyPath: levelNo
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9047477930630689403, guid: 751ff1431fd39d54db219beb6e3687dd, type: 3}
       propertyPath: m_Color.r

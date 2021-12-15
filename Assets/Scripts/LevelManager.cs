@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour {
 
     GameObject[] tiles;
     List<(int dx, int dy)> neighbours;
-    public ScriptableLevel levelData;
+    public ScriptableLevel levelData;       // default value set in the editor
     bool cleared = false;
 
     void Start() {
@@ -23,8 +23,8 @@ public class LevelManager : MonoBehaviour {
             (0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)
         };
 
-        if (ApplicationModel.scriptableLevel != null) {
-            levelData = ApplicationModel.scriptableLevel;
+        if (ApplicationModel.levelToLoad > -1) {
+            levelData = ApplicationModel.ScriptableLevel;
         }
 
         Debug.Log("Loaded level nb rows: " + levelData.nbRows);
@@ -223,6 +223,16 @@ public class LevelManager : MonoBehaviour {
     public void Back() {
         Debug.Log("Back");
         SceneManager.LoadScene("LevelSelection");
+    }
+
+    public void NextLevel() {
+        if (ApplicationModel.loadedLevels.Count > ApplicationModel.levelToLoad + 1) {
+            ApplicationModel.levelToLoad++;
+            SceneManager.LoadScene("Level");
+        } else {
+            Debug.Log("++ End of loaded levels ++");
+            SceneManager.LoadScene("LevelSelection");
+        }
     }
 
 }

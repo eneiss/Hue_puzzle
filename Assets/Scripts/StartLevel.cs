@@ -1,36 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 // FIXME: haptic feedback not working :(
 
-public class StartLevel : MonoBehaviour
-{
+public class StartLevel : MonoBehaviour {
+
+    public int levelNo;     // one-based index
 
     //Cache the Manager for performance
     private static HapticFeedbackManager mHapticFeedbackManager;
 
-    public void LoadLevel()
-    {
+    public void LoadLevel() {
         Debug.Log("Starting level");
 
         Handheld.Vibrate();
-        LevelData tempLevelData = (LevelData) gameObject.GetComponent(typeof(LevelData));
-        GameObject levelDataObject = GameObject.FindWithTag("LevelData");
-        LevelData keepLevelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
-        DontDestroyOnLoad(levelDataObject);
 
-        keepLevelData.Copy(tempLevelData);
-
-        SceneManager.LoadScene("Level");
+        SelectionManager manager = FindObjectOfType<SelectionManager>();
+        manager.OnLevelChoice(levelNo);
     }
 
 
-    public static bool HapticFeedback()
-    {
-        if (mHapticFeedbackManager == null)
-        {
+    public static bool HapticFeedback() {
+        if (mHapticFeedbackManager == null) {
             mHapticFeedbackManager = new HapticFeedbackManager();
         }
         return mHapticFeedbackManager.Execute();
@@ -38,15 +28,13 @@ public class StartLevel : MonoBehaviour
 }
 
 
-public class HapticFeedbackManager
-{
+public class HapticFeedbackManager {
 #if UNITY_ANDROID && !UNITY_EDITOR
         private int HapticFeedbackConstantsKey;
         private AndroidJavaObject UnityPlayer;
 #endif
 
-    public HapticFeedbackManager()
-    {
+    public HapticFeedbackManager() {
 #if UNITY_ANDROID && !UNITY_EDITOR
             HapticFeedbackConstantsKey=new AndroidJavaClass("android.view.HapticFeedbackConstants").GetStatic<int>("VIRTUAL_KEY");
             UnityPlayer=new AndroidJavaClass ("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity").Get<AndroidJavaObject>("mUnityPlayer");
@@ -56,8 +44,7 @@ public class HapticFeedbackManager
 #endif
     }
 
-    public bool Execute()
-    {
+    public bool Execute() {
 #if UNITY_ANDROID && !UNITY_EDITOR
             return UnityPlayer.Call<bool> ("performHapticFeedback",HapticFeedbackConstantsKey);
 #endif

@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: cool colors
   m_EditorClassIdentifier: 
   levelId: 2
-  nbRows: 0
-  nbColumns: 0
+  nbRows: 7
+  nbColumns: 7
   topLeftColor: {r: 0.14394356, g: 0.65402013, b: 0.5739148, a: 1}
   topRightColor: {r: 0.24927047, g: 0.059140332, b: 0.3456098, a: 1}
   bottomLeftColor: {r: 0.44515902, g: 0.6970064, b: 0.21529737, a: 1}
   bottomRightColor: {r: 0.40542704, g: 0.039312128, b: 0.5687941, a: 1}
+  moves:
+  - {x: 2, y: 3}
   fixedTiles: []

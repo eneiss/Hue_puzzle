@@ -1,14 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SelectionManager : MonoBehaviour {
+
+    public ScriptableLevel[] levels;
+
     void Start() {
-        ApplicationModel.levelFileNames.Add("test_level");
+
+        foreach (ScriptableLevel level in levels) {
+            ApplicationModel.loadedLevels.Add(level);
+        }
     }
 
-    // TODO somewhere: write ApplicationModel.levelToLoad (or have the buttons do it)
-    void Update() {
+    public void OnLevelChoice(int levelNo) {
 
+        ApplicationModel.levelToLoad = levelNo - 1;
+
+        SceneManager.LoadScene("Level");
     }
 }

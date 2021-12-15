@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class ApplicationModel {
 
-    // TODO delete
-    public static int levelToLoad = 0;
-    // TODO delete
-    public static string LevelToLoadPath { get => "Levels/" + levelFileNames [levelToLoad]; }
-    // TODO delete
-    public static List<string> levelFileNames = new List<string>();
+    // 0-based index
+    public static int levelToLoad = -1;
 
-    public static ScriptableLevel scriptableLevel;
+    public static ScriptableLevel ScriptableLevel { get => loadedLevels[levelToLoad]; }
+    public static List<ScriptableLevel> loadedLevels = new List<ScriptableLevel>();
 
 }
