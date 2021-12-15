@@ -6,7 +6,6 @@ using UnityEngine;
 [CreateAssetMenu]
 public class ScriptableLevel : ScriptableObject {
 
-    public int levelId;
     public int nbRows;
     public int nbColumns;
     public Color topLeftColor;

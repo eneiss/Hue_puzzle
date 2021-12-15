@@ -35,8 +35,6 @@ public class LevelEditorManager {
     [SerializeField]
     private int height;
 
-    private int currentLevelId;
-
     private List<(int dx, int dy)> neighbours = new List<(int dx, int dy)>
         {
             (-1, -1), (-1, 1), (1, -1), (1, 1),
@@ -123,9 +121,9 @@ public class LevelEditorManager {
         }
 
         // determine level id
-        string levelsDirPath = Application.dataPath + "/Levels";
-        DirectoryInfo levelsDirInfo = new DirectoryInfo(levelsDirPath);
-        currentLevelId = (int)levelsDirInfo.CountFilesOfType("asset");
+        //string levelsDirPath = Application.dataPath + "/Levels";
+        //DirectoryInfo levelsDirInfo = new DirectoryInfo(levelsDirPath);
+        //currentLevelId = (int)levelsDirInfo.CountFilesOfType("asset");
 
         moves = new List<Vector2Int>();
     }
@@ -228,7 +226,8 @@ public class LevelEditorManager {
         ScriptableLevel level = ScriptableObject.CreateInstance<ScriptableLevel>();
         AssetDatabase.CreateAsset(level, path);
 
-        level.levelId = this.currentLevelId;
+        level.nbRows = this.height;
+        level.nbColumns = this.width;
         level.topLeftColor = this.corners[1];
         level.topRightColor = this.corners[2];
         level.bottomLeftColor = this.corners[0];
@@ -260,7 +259,7 @@ public class LevelEditorManager {
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        this.currentLevelId++;
+        //this.currentLevelId++;
     }
 
 }
