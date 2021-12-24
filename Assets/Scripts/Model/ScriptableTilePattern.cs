@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu, System.Serializable]
+[System.Serializable]
 public class ScriptableTilePattern : ScriptableObject {
 
     // pattern parameters

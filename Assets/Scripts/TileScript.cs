@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class TileScript : MonoBehaviour
-{
+public class TileScript : MonoBehaviour {
 
     LevelManager gameManager;
     public bool isInverted = false;
@@ -9,9 +8,8 @@ public class TileScript : MonoBehaviour
     bool isFixed = false;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        gameManager = (LevelManager) GameObject.FindWithTag("LevelManager").GetComponent(typeof(LevelManager));
+    void Start() {
+        gameManager = (LevelManager)GameObject.FindWithTag("LevelManager").GetComponent(typeof(LevelManager));
     }
 
     // OLD CODE
@@ -46,28 +44,23 @@ public class TileScript : MonoBehaviour
     }
     */
 
-    public void InvertColor()
-    {
+    public void InvertColor() {
         //Debug.Log("Inverting color of tile at " + transform.localPosition.x + ", " + transform.localPosition.y);
-        if (!this.isFixed)
-        {
+        if (!this.isFixed) {
             SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
             renderer.color = new Color(1f - renderer.color.r, 1f - renderer.color.g, 1f - renderer.color.b, 1f);
             isInverted = !isInverted;
         }
     }
 
-    public void SetFixed(bool isFixed)
-    {
-        if (isFixed)
-        {
+    public void SetFixed(bool isFixed) {
+        if (isFixed) {
             this.isFixed = true;
             this.dot.SetActive(true);
         }
     }
 
-    public bool GetFixed()
-    {
+    public bool GetFixed() {
         return isFixed;
     }
 }

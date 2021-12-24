@@ -228,7 +228,8 @@ public class LevelManager : MonoBehaviour {
         if (ApplicationModel.loadedLevels.Count > ApplicationModel.levelToLoad + 1) {
             ApplicationModel.levelToLoad++;
             SceneManager.LoadScene("Level");
-        } else {
+        }
+        else {
             Debug.Log("++ End of loaded levels ++");
             SceneManager.LoadScene("LevelSelection");
         }

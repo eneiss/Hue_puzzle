@@ -6,15 +6,13 @@ using UnityEngine;
     (Test file)
  */
 
-public class LevelGameManager : MonoBehaviour
-{
+public class LevelGameManager : MonoBehaviour {
 
     GameObject[] tiles;
     List<(int dx, int dy)> neighbours;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
         // relative pos of neighbour tiles 
@@ -25,46 +23,36 @@ public class LevelGameManager : MonoBehaviour
         };
     }
 
-    public void InvertTiles(int x, int y)
-    {
+    public void InvertTiles(int x, int y) {
 
         bool allCorrect = true;
 
-        foreach (GameObject tile in tiles)
-        {
-            foreach ((int dx, int dy) in neighbours)
-            {
+        foreach (GameObject tile in tiles) {
+            foreach ((int dx, int dy) in neighbours) {
                 //Debug.Log("dx : " + dx + ", dy : " + dy);
 
-                if ((x + dx == tile.transform.localPosition.x) && (y + dy == tile.transform.localPosition.y))
-                {
-                    TileScript ts = (TileScript) tile.GetComponent(typeof(TileScript));
+                if ((x + dx == tile.transform.localPosition.x) && (y + dy == tile.transform.localPosition.y)) {
+                    TileScript ts = (TileScript)tile.GetComponent(typeof(TileScript));
                     ts.InvertColor();
-                    if (ts.isInverted)
-                    {
+                    if (ts.isInverted) {
                         allCorrect = false;
                     }
                 }
             }
         }
 
-        if (allCorrect)
-        {
-            if (LevelIsCleared())
-            {
+        if (allCorrect) {
+            if (LevelIsCleared()) {
                 EndLevel();
             }
         }
     }
 
-    bool LevelIsCleared()
-    {
+    bool LevelIsCleared() {
         bool allCorrect = true;
-        foreach (GameObject tile in tiles)
-        {
+        foreach (GameObject tile in tiles) {
             TileScript ts = (TileScript)tile.GetComponent(typeof(TileScript));
-            if (ts.isInverted)
-            {
+            if (ts.isInverted) {
                 allCorrect = false;
                 break;
             }
@@ -73,8 +61,7 @@ public class LevelGameManager : MonoBehaviour
         return allCorrect;
     }
 
-    void EndLevel()
-    {
+    void EndLevel() {
         Debug.Log("GG!");
     }
 }

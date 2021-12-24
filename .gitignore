@@ -60,4 +60,5 @@ crashlytics-build.properties
 
 # ------------ CUSTOM IGNORES
 Assets/Levels/*test*
+Assets/Sprites/
 

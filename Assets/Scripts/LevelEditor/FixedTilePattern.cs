@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// DONT COMMIT CHANGES HERE!!!
-
-public class FixedTilePattern : MonoBehaviour, IEnumerable
-{
+public class FixedTilePattern : MonoBehaviour, IEnumerable {
     // pattern parameters
     public int roffset, coffset, rendoffset, cendoffset, spacing, repeat;
 
@@ -14,10 +11,9 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
     public List<Tuple<int, int>> tiles = null;
 
     // compute the coordinates of each fixed tile in the pattern
-    void ComputeTileCoords()
-    {
+    void ComputeTileCoords() {
         tiles = new List<Tuple<int, int>>();
-        
+
         GameObject levelDataObject = GameObject.FindWithTag("LevelData");
         LevelData levelData = (LevelData)levelDataObject.GetComponent(typeof(LevelData));
 
@@ -31,55 +27,44 @@ public class FixedTilePattern : MonoBehaviour, IEnumerable
         List<int> cIndexes = new List<int>();
 
         // rows
-        if (spacing > 0)
-        {  
-            for (int i = roffset; i < levelData.nbRows - rendoffset; i += spacing)
-            {
+        if (spacing > 0) {
+            for (int i = roffset; i < levelData.nbRows - rendoffset; i += spacing) {
                 rIndexes.Add(i);
             }
-        } else
-        {
+        }
+        else {
             rIndexes.Add(roffset);
         }
 
 
         // columns
-        if (repeat > 0)
-        {
-            for (int i = coffset; i < levelData.nbColumns - cendoffset; i += repeat)
-            {
+        if (repeat > 0) {
+            for (int i = coffset; i < levelData.nbColumns - cendoffset; i += repeat) {
                 cIndexes.Add(i);
             }
         }
-        else
-        {
+        else {
             cIndexes.Add(coffset);
         }
 
-        foreach (int r in rIndexes)
-        {
-            foreach (int c in cIndexes)
-            {
+        foreach (int r in rIndexes) {
+            foreach (int c in cIndexes) {
                 tiles.Add(new Tuple<int, int>(r, c));
             }
         }
     }
 
-    public IEnumerator GetEnumerator()
-    {
-        if (tiles == null)
-        {
+    public IEnumerator GetEnumerator() {
+        if (tiles == null) {
             ComputeTileCoords();
         }
 
-        foreach (Tuple<int, int> tuple in tiles)
-        {
+        foreach (Tuple<int, int> tuple in tiles) {
             yield return tuple;
         }
     }
 
-    public void Copy(FixedTilePattern source)
-    {
+    public void Copy(FixedTilePattern source) {
         this.roffset = source.roffset;
         this.coffset = source.coffset;
         this.rendoffset = source.rendoffset;

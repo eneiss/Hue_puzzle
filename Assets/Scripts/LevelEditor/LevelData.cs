@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelData : MonoBehaviour
-{
+public class LevelData : MonoBehaviour {
     public int nbRows;
     public int nbColumns;
     public Color topLeftColor;
@@ -14,8 +13,7 @@ public class LevelData : MonoBehaviour
     public List<string> moves;
     public List<FixedTilePattern> fixedTiles;
 
-    public void Copy(LevelData source)
-    {
+    public void Copy(LevelData source) {
         this.nbRows = source.nbRows;
         this.nbColumns = source.nbColumns;
         this.topLeftColor = source.topLeftColor;
@@ -25,13 +23,11 @@ public class LevelData : MonoBehaviour
 
         // shallow copy !!!!
         // WARNING must be edited when making changes to the level data structure
-        foreach (string move in source.moves)
-        {
+        foreach (string move in source.moves) {
             this.moves.Add(move);
         }
 
-        foreach (FixedTilePattern pattern in source.fixedTiles)
-        {
+        foreach (FixedTilePattern pattern in source.fixedTiles) {
             FixedTilePattern newPattern = gameObject.AddComponent<FixedTilePattern>();
             // FixedTilePattern newPattern = new FixedTilePattern();
             this.fixedTiles.Add(newPattern);
